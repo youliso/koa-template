@@ -1,7 +1,7 @@
 'use strict';
 const Router = require('koa-router');
 const user = new Router();
-const UserInfo = require('../info/user');
+const User = require('../info/user');
 
 user.post('/login', async (ctx, next) => {
     ctx.body = ctx.result.success('测试');
