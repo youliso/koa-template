@@ -99,7 +99,7 @@ class ws extends original {
                 this.logger.error(err);
             });
 
-            client.send(JSON.stringify({code: 11, msg: 'ready', time: new Date().getTime()}));
+            client.send(JSON.stringify({code: 11, time: new Date().getTime()}));
         });
     }
 
