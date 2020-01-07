@@ -38,11 +38,11 @@ class Email extends original {
 
     async add() {
         let data = {email: this.email, code: this.code, endtime: new Date().getTime() + 10 * 60 * 1000};
-        return this._add(this.TABLE_NAME, data);
+        await this._add(this.TABLE_NAME, data);
     }
 
     async del(id) {
-        return this._del(this.TABLE_NAME, id);
+        await this._del(this.TABLE_NAME, id);
     }
 
     async get() {
@@ -54,19 +54,19 @@ class Email extends original {
         }
     }
 
-    async send(msg) {
-        this.sendMailOptions.subject = `test - 验证码`;
-        let find = await this.get();
-        if (find) return this.success('已发送,十分钟有效期');
-        let transporter = nodeMailer.createTransport(this.transportOptions);
+    async send() {
         try {
+            this.sendMailOptions.subject = `test - 验证码`;
+            let find = await this.get();
+            if (find) return this.success('已发送,十分钟有效期');
+            let transporter = nodeMailer.createTransport(this.transportOptions);
             let info = await transporter.sendMail(this.sendMailOptions);
             if (info) {
                 await this.add();
                 return this.success('发送成功,十分钟有效期');
             }
-        } catch (error) {
-            this.logger.error(error);
+        } catch (err) {
+            this.logger.error(err);
             return this.error('验证码发送失败，请重新尝试');
         }
     }

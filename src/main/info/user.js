@@ -19,15 +19,25 @@ class User extends original {
     }
 
     async add(obj) {
-        let data = this.getAll(obj);
-        await this._add(this.TABLE_NAME, data);
-        return this.success('注册成功');
+        try {
+            let data = this.getAll(obj);
+            await this._add(this.TABLE_NAME, data);
+            return this.success('注册成功');
+        } catch (err) {
+            this.logger.error(err);
+            return this.error('注册失败');
+        }
     }
 
     async upd(obj) {
-        let data = this.getAll(obj);
-        await this._upd(this.TABLE_NAME, data, this.id);
-        return db.query('update user_info set ? where id = ?', data)
+        try {
+            let data = this.getAll(obj);
+            await this._upd(this.TABLE_NAME, data, this.id);
+            return this.success('修改成功');
+        } catch (err) {
+            this.logger.error(err);
+            return this.error('修改失败');
+        }
     }
 }
 
