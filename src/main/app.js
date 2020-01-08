@@ -75,7 +75,8 @@ const server = http.createServer(app.callback());
 const ws = new WebSocket.Server({// 同一个端口监听不同的服务
     server
 });
-WebSocketApi(ws, wsRouter);
+
+new WebSocketApi().init(ws, wsRouter);
 server.listen(3000);
 
 // https.createServer({

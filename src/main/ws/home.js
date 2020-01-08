@@ -11,12 +11,9 @@ class home extends original {
         for (let i in ctx.users) {
             users.push(ctx.users[i].family);
         }
-        ctx.broadcast(users, 'app-home.users');
+        ctx.broadcast(this.WsSuccess('ok', ctx.result, {test: "test"}));
     }
 
 }
 
-let e = new home();
-module.exports = {
-    index: e.index
-};
+module.exports = new home();

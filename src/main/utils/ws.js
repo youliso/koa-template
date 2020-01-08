@@ -41,7 +41,7 @@ class ws extends original {
     //初始化
     init(ws, router) {
         ws.on('connection', async client => {
-            if (!client.protocol) {
+            if (this.isNull(client.protocol)) {
                 client.send(this.WsError('Token为空'));
                 client.close();
                 return;
@@ -105,5 +105,4 @@ class ws extends original {
 
 }
 
-
-module.exports = new ws().init;
+module.exports = ws;

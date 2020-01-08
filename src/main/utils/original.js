@@ -17,7 +17,12 @@ class original {
         return obj === '' ? null : /^[0-9]+.?[0-9]*$/.test(obj) ? Number(obj) : obj;
     }
 
-    isNull(obj) {
+    isNull(arg) {
+        if (typeof arg === 'string') arg = this.trim(arg);
+        return !arg && arg !== 0 && typeof arg !== "boolean" ? true : false;
+    }
+
+    isNullAll(obj) {
         obj = obj || [];
         for (let i of obj) if (this[i]) return true;
         return false;
