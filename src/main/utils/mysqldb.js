@@ -1,6 +1,7 @@
 'use strict';
 const {db} = require('../../resources/config');
 const mysql = require('mysql2');
+const timer = require('./timer');
 
 class MysqlDb {
 
@@ -23,8 +24,9 @@ class MysqlDb {
                 database: db.database,
                 charset: 'utf8mb4'
             });
-        } else return this.dbClient;
-        console.log('[mysql]初始化');
+            new timer(this.dbClient.promise());
+            console.log('[mysql]初始化');
+        }
     }
 
     //将结果已对象数组返回
