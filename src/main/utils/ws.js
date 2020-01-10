@@ -3,12 +3,19 @@ const _ = require('./original');
 const {wsToken} = require('./token');
 
 class ws {
+
+    static getInstance() {
+        if (!ws.instance) ws.instance = new ws();
+        return ws.instance;
+    }
+
     constructor() {
         this.isFirst = true; //是否首次
         this.clients = {}; //客户端组
         this.users = {}; //用户信息组
         this.count = 0; // 连接数量
         this.tokenRefreshId = null; //token刷新Id
+        console.log('[ws]...');
     }
 
     //token刷新
@@ -104,4 +111,4 @@ class ws {
 
 }
 
-module.exports = ws;
+module.exports = ws.getInstance();

@@ -23,7 +23,7 @@ class MysqlDb {
                 database: db.database,
                 charset: 'utf8mb4'
             });
-            console.log('[mysql]初始化');
+            console.log('[mysql]...');
         }
     }
 

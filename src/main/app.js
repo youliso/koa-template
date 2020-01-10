@@ -68,13 +68,12 @@ let wsRouter = {};
 fs.readdirSync(__dirname + '/ws').forEach((element) => {
     wsRouter[element.replace('.js', '')] = require(__dirname + '/ws/' + element);
 });
-const WebSocketApi = require('./utils/ws');//引入封装的ws模块
 const server = http.createServer(app.callback());
 const ws = new WebSocket.Server({// 同一个端口监听不同的服务
     server
 });
-
-new WebSocketApi().init(ws, wsRouter);
+require('./utils/ws').init(ws, wsRouter); //ws模块
+require('./utils/timer');//定时器模块
 server.listen(3000);
 
 // https.createServer({

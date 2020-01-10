@@ -1,7 +1,6 @@
 const db = require('./mysqldb');
 const crypto = require('./crypto');
 const logger = require('./logger').logger;
-const timer = require('./timer');
 
 class original {
 
@@ -14,7 +13,6 @@ class original {
         this.crypto = crypto;
         this.logger = logger;
         this.db = db;
-        new timer(this.db);
     }
 
     trim(str) {
