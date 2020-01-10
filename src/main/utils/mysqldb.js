@@ -1,7 +1,6 @@
 'use strict';
 const {db} = require('../../resources/config');
 const mysql = require('mysql2');
-const timer = require('./timer');
 
 class MysqlDb {
 
@@ -25,7 +24,6 @@ class MysqlDb {
                 charset: 'utf8mb4'
             });
             console.log('[mysql]初始化');
-            new timer(this.dbClient);
         }
     }
 

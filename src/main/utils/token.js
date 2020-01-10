@@ -1,6 +1,5 @@
 'use strict';
-const original = require('./original');
-const _ = new original();
+const _ = require('./original');
 module.exports = {
     httpToken: async (ctx, next) => {
         let url = ctx.request.url;

@@ -1,13 +1,20 @@
 const db = require('./mysqldb');
 const crypto = require('./crypto');
 const logger = require('./logger').logger;
+const timer = require('./timer');
 
 class original {
+
+    static getInstance() {
+        if (!original.instance) original.instance = new original();
+        return original.instance;
+    }
 
     constructor() {
         this.crypto = crypto;
         this.logger = logger;
         this.db = db;
+        new timer(this.db);
     }
 
     trim(str) {
@@ -68,4 +75,4 @@ class original {
     }
 }
 
-module.exports = original;
+module.exports = original.getInstance();

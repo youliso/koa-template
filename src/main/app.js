@@ -23,9 +23,7 @@ app.use(cors({
 // utils
 app.use(async (ctx, next) => {
     if (ctx.path === '/favicon.ico') return;
-    ctx.logger = require('./utils/logger').logger;
-    let original = require('./utils/original');
-    ctx.result = new original();
+    ctx.result = require('./utils/original');
     await next();
 });
 
@@ -62,7 +60,7 @@ app.use(async (ctx, next) => {
 
 //error
 app.on('error', (err, ctx) => {
-    ctx.logger.error(err);
+    ctx.result.logger.error(err);
 });
 
 // router - ws

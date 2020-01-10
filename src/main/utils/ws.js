@@ -1,10 +1,9 @@
 'use strict';
-const original = require('./original');
+const _ = require('./original');
 const {wsToken} = require('./token');
 
-class ws extends original {
+class ws {
     constructor() {
-        super();
         this.isFirst = true; //是否首次
         this.clients = {}; //客户端组
         this.users = {}; //用户信息组
@@ -41,20 +40,20 @@ class ws extends original {
     //初始化
     init(ws, router) {
         ws.on('connection', async client => {
-            if (this.isNull(client.protocol)) {
-                client.send(this.WsError('Token为空'));
+            if (_.isNull(client.protocol)) {
+                client.send(_.WsError('Token为空'));
                 client.close();
                 return;
             }
             let Req = await wsToken(client, client.protocol);
             if (!Req) {
-                client.send(this.WsError('Token错误'));
+                client.send(_.WsError('Token错误'));
                 client.close();
                 return;
             }
             client.id = Req.userInfo.id;
             if (this.clients[client.id]) {
-                client.send(this.WsError('重复登录'));
+                client.send(_.WsError('重复登录'));
                 client.close();
                 return;
             }
@@ -69,7 +68,7 @@ class ws extends original {
                 } catch (e) {
                 }
                 if (!message || !message.path || !message.result) {
-                    client.send(this.WsError('参数错误'));
+                    client.send(_.WsError('参数错误'));
                     return;
                 }
                 let path = message.path.split('.');
@@ -96,7 +95,7 @@ class ws extends original {
             });
 
             client.on('error', async err => {
-                this.logger.error(err);
+                _.logger.error(err);
             });
 
             client.send(JSON.stringify({code: 11, time: new Date().getTime()}));

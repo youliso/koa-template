@@ -1,4 +1,4 @@
-const original = require('../utils/original');
+const _ = require('../utils/original');
 const eTemplate = require('../utils/eTemplate');
 const nodeMailer = require('nodemailer');
 
@@ -7,12 +7,11 @@ const nodeMailer = require('nodemailer');
  * email 收件人
  * */
 
-class Email extends original {
+class Email {
     constructor(info) {
-        super();
         this.TABLE_NAME = 'verify_list';
         info = info || {};
-        this.email = this.trim(info.email);
+        this.email = _.trim(info.email);
         this.code = Math.random().toString(16).slice(2, 6).toUpperCase();
         this.conf = {
             user: 'test@163.com',
@@ -38,15 +37,15 @@ class Email extends original {
 
     async add() {
         let data = {email: this.email, code: this.code, endtime: new Date().getTime() + 10 * 60 * 1000};
-        await this._add(this.TABLE_NAME, data);
+        await _._add(this.TABLE_NAME, data);
     }
 
     async del(id) {
-        await this._del(this.TABLE_NAME, id);
+        await _._del(this.TABLE_NAME, id);
     }
 
     async get() {
-        let req = await this.db.single('select * from ? where email=?', [this.TABLE_NAME, this.email]);
+        let req = await _.db.single('select * from ? where email=?', [this.TABLE_NAME, this.email]);
         if (req && Number(req.endtime) > new Date().getTime()) return req;
         else {
             if (req) await this.del(req.id);
@@ -58,16 +57,16 @@ class Email extends original {
         try {
             this.sendMailOptions.subject = `test - 验证码`;
             let find = await this.get();
-            if (find) return this.success('已发送,十分钟有效期');
+            if (find) return _.success('已发送,十分钟有效期');
             let transporter = nodeMailer.createTransport(this.transportOptions);
             let info = await transporter.sendMail(this.sendMailOptions);
             if (info) {
                 await this.add();
-                return this.success('发送成功,十分钟有效期');
+                return _.success('发送成功,十分钟有效期');
             }
         } catch (err) {
-            this.logger.error(err);
-            return this.error('验证码发送失败，请重新尝试');
+            _.logger.error(err);
+            return _.error('验证码发送失败，请重新尝试');
         }
     }
 

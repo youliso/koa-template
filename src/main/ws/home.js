@@ -1,9 +1,8 @@
 'use strict';
-const original = require('../utils/original');
+const _ = require('../utils/original');
 
-class home extends original {
+class home {
     constructor() {
-        super();
     }
 
     index(client, ctx) {
@@ -11,7 +10,7 @@ class home extends original {
         for (let i in ctx.users) {
             users.push(ctx.users[i].family);
         }
-        ctx.broadcast(this.WsSuccess('ok', ctx.result, {test: "test"}));
+        ctx.broadcast(_.WsSuccess('ok', ctx.result, {test: "test"}));
     }
 
 }
