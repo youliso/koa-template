@@ -25,7 +25,7 @@ class MysqlDb {
                 charset: 'utf8mb4'
             });
             console.log('[mysql]初始化');
-            new timer(this.dbClient.promise());
+            new timer(this.dbClient);
         }
     }
 
