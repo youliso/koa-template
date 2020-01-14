@@ -1,5 +1,20 @@
 'use strict';
+const schedule = require('node-schedule');
 const _ = require('./original');
+
+const Map = {
+    //test1
+    test1: (is) => {
+        console.log('test1');
+        if (is) return 1000 * 60 * 60 * 24;
+    },
+    //test2
+    test2: (is) => {
+        console.log('test2');
+        if (is) return '10 * * * * *';
+    }
+};
+
 class timer {
 
     static getInstance() {
@@ -8,33 +23,25 @@ class timer {
     }
 
     constructor() {
-        this.deftimeout = 1000 * 60 * 60 * 24;
-        this.Map = [];
-        this.start();
         console.log('[timer]...');
+        this.start();
     }
 
     start() {
         let that = this;
-        this.Map.map(e => {
-            let timeout = eval('this.' + e)(true,that);
-            setInterval(() => {
-                eval('this.' + e)(false,that)
-            }, timeout)
-        });
+        for (let i in Map) {
+            let timeout = Map[i](true, that);
+            if (typeof timeout === 'number') {
+                setInterval(() => {
+                    Map[i](false, that)
+                }, timeout)
+            } else if (typeof timeout === 'string') {
+                schedule.scheduleJob(timeout, () => {
+                    Map[i](false, that)
+                });
+            }
+        }
     }
-
-    // //test1
-    // test1(is,that) {
-    //     console.log('test1');
-    //     if (is) return that.deftimeout;
-    // }
-    //
-    // //test2
-    // test2(is,that) {
-    //     console.log('test2');
-    //     if (is) return 1000 * 60 * 60;
-    // }
 }
 
 module.exports = timer.getInstance();
