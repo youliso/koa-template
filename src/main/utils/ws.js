@@ -54,7 +54,6 @@ class ws {
             }
             let Req = await wsToken(client, client.protocol);
             if (!Req) {
-                client.send(_.WsError('Token错误'));
                 client.close();
                 return;
             }
