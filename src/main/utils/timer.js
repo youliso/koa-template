@@ -5,13 +5,13 @@ const _ = require('./original');
 const Map = {
     //test1
     test1: (is) => {
-        console.log('test1');
         if (is) return 1000 * 60 * 60 * 24;
+        console.log('test1');
     },
     //test2
     test2: (is) => {
-        console.log('test2');
         if (is) return '10 * * * * *';
+        console.log('test2');
     }
 };
 
