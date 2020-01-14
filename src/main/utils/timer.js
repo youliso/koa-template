@@ -5,12 +5,12 @@ const _ = require('./original');
 const Map = {
     //test1
     test1: (is) => {
-        if (is) return 1000 * 60 * 60 * 24;
+        if (is) return 1000 * 60 * 60 * 24; //毫秒、秒、分、时
         console.log('test1');
     },
     //test2
     test2: (is) => {
-        if (is) return '10 * * * * *';
+        if (is) return '0 * * * * *'; //秒、分、时、日、月、周几
         console.log('test2');
     }
 };
