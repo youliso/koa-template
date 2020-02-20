@@ -1,6 +1,6 @@
 'use strict';
 const crypto = require('crypto');
-const {cryptoPassword} = require('../../resources/config');
+const {cryptoPassword} = require('../config');
 /**
  * 加密函数Md5
  * @param text  需要加密的内容

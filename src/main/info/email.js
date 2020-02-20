@@ -1,5 +1,5 @@
-const _ = require('../utils/original');
-const eTemplate = require('../utils/eTemplate');
+const _ = require('../../resources/utils/original');
+const eTemplate = require('../../resources/utils/eTemplate');
 const nodeMailer = require('nodemailer');
 
 /**

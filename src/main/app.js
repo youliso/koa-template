@@ -10,7 +10,7 @@ const WebSocket = require('ws');
 // const enforceHttps = require('koa-sslify').default;
 const path = require('path');
 const fs = require('fs');
-const {httpToken} = require('./utils/token');
+const {httpToken} = require('../resources/utils/token');
 const app = new koa();
 const router = new Router();
 
@@ -23,7 +23,7 @@ app.use(cors({
 // utils
 app.use(async (ctx, next) => {
     if (ctx.path === '/favicon.ico') return;
-    ctx.result = require('./utils/original');
+    ctx.result = require('../resources/utils/original');
     await next();
 });
 
@@ -72,8 +72,8 @@ const server = http.createServer(app.callback());
 const ws = new WebSocket.Server({// 同一个端口监听不同的服务
     server
 });
-require('./utils/ws').init(ws, wsRouter); //ws模块
-require('./utils/timer');//定时器模块
+require('../resources/utils/ws').init(ws, wsRouter); //ws模块
+require('../resources/utils/timer');//定时器模块
 server.listen(3000);
 
 // https.createServer({

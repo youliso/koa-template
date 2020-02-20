@@ -1,5 +1,5 @@
 'use strict';
-const {db} = require('../../resources/config');
+const {db} = require('../config');
 const mysql = require('mysql2');
 
 class MysqlDb {
