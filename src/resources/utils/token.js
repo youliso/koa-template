@@ -1,9 +1,10 @@
 'use strict';
+const {noToken} = require('../config');
 const _ = require('./original');
 module.exports = {
     httpToken: async (ctx, next) => {
         let url = ctx.request.url;
-        if (ctx.config.noToken.indexOf(url) > -1 || url.indexOf('/dist') > -1) await next();
+        if (noToken.indexOf(url) > -1 || url.indexOf('/dist') > -1) await next();
         else {
             let token = ctx.request.headers['authorization'];
             if (token) {

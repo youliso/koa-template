@@ -34,7 +34,7 @@ app.use(async (ctx, next) => {
 // app.use(require('../resources/utils/logger').accessLogger());
 
 // bodyParser
-app.use(bodyParser);
+app.use(bodyParser());
 
 //token
 app.use(httpToken);

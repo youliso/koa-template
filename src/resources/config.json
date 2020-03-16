@@ -7,7 +7,8 @@
   },
   "noToken": [
     "/user/login",
-    "/user/register"
+    "/user/register",
+    "/license.txt"
   ],
   "cryptoPassword": "tesdsadwfwqfqfqwqrqwasdasdqwqweqwewqt"
 }
