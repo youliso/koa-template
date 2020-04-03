@@ -18,9 +18,12 @@ class User {
 
     async add(obj) {
         try {
-            let data = _.getAll(obj);
-            await _._add(this.TABLE_NAME, data);
-            return _.success('注册成功');
+            return await _.lock.acquire('user_add', async () => {
+                let data = _.getAll(obj);
+                await _._add(this.TABLE_NAME, data);
+            }).then(() => {
+                return _.success('注册成功');
+            });
         } catch (err) {
             _.logger.error(err);
             return _.error('注册失败');

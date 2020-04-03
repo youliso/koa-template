@@ -1,5 +1,7 @@
 const db = require('./mysqldb');
 const crypto = require('./crypto');
+const AsyncLock = require('async-lock');
+const lock = new AsyncLock();
 const logger = require('./logger').logger;
 
 class original {
@@ -11,6 +13,7 @@ class original {
 
     constructor() {
         this.crypto = crypto;
+        this.lock = lock;
         this.logger = logger;
         this.db = db;
     }

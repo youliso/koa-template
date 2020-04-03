@@ -6,6 +6,7 @@
     "database": "test"
   },
   "noToken": [
+    "/test/i",
     "/user/login",
     "/user/register",
     "/license.txt"
