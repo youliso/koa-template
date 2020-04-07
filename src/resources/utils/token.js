@@ -3,7 +3,7 @@ const {noToken} = require('../config');
 const _ = require('./original');
 module.exports = {
     httpToken: async (ctx, next) => {
-        let url = ctx.request.url;
+        let url = ctx.request.url.split('?')[0];
         if (noToken.indexOf(url) > -1 || url.indexOf('/dist') > -1) await next();
         else {
             let token = ctx.request.headers['authorization'];
