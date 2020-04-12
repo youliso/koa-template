@@ -10,30 +10,10 @@ class ws {
     }
 
     constructor() {
-        this.isFirst = true; //是否首次
         this.clients = {}; //客户端组
         this.users = {}; //用户信息组
         this.count = 0; // 连接数量
-        this.tokenRefreshId = null; //token刷新Id
         console.log('[ws]...');
-    }
-
-    //token刷新
-    tokenRefresh() {
-        console.log('[WsTokenRefresh]初始化');
-        this.tokenRefreshId = setInterval(async () => {
-            for (let i in this.clients) {
-                let Req = await wsToken(this.clients[i], this.clients[i].protocol);
-                if (!Req) {
-                    this.clients[i].close();
-                    return;
-                }
-                this.clients[i].id = Req.userInfo.id;
-                this.clients[this.clients[i].id] = this.clients[i];
-                this.users[this.clients[i].id] = Req.userInfo;
-                this.clients[i].send(JSON.stringify({code: 22, data: Req.token, time: new Date().getTime()}));
-            }
-        }, 1000 * 60 * 90);
     }
 
     //广播
@@ -65,8 +45,6 @@ class ws {
             }
             this.clients[client.id] = client;
             this.users[client.id] = Req.userInfo;
-            if (this.isFirst) this.tokenRefresh();
-            this.isFirst = false;
             this.count++;
             client.on('message', async message => {
                 try {
