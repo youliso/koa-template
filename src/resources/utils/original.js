@@ -1,8 +1,6 @@
 const db = require('./mysqldb');
 const crypto = require('./crypto');
-const AsyncLock = require('async-lock');
-const lock = new AsyncLock();
-const logger = require('./logger').logger;
+const logger = require('./logger');
 
 class original {
 
@@ -13,7 +11,6 @@ class original {
 
     constructor() {
         this.crypto = crypto;
-        this.lock = lock;
         this.logger = logger;
         this.db = db;
     }
@@ -64,15 +61,16 @@ class original {
     }
 
     _get(table, id) {
-        return this.db.single('select * from ? where id = ?', [table, id]);
+        if (id) return this.db.single('select * from ' + table + ' where id = ?', [id]);
+        else return this.db.first('select * from ' + table);
     }
 
     _upd(table, data, id) {
-        return this.db.query('update ? set ? where id = ?', [table, data, id])
+        return this.db.query('update ' + table + ' set ? where id = ?', [data, id])
     }
 
     _del(table, id) {
-        return this.db.query('delete from ? where id = ?', [table, id]);
+        return this.db.query('delete from ' + table + ' where id = ?', [id]);
     }
 }
 

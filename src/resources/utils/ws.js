@@ -79,7 +79,7 @@ class ws {
             });
 
             client.on('error', async err => {
-                _.logger.error(err);
+                _.logger.application.error(err);
             });
 
             client.send(JSON.stringify({code: 11, time: new Date().getTime()}));

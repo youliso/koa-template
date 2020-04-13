@@ -23,11 +23,10 @@ class timer {
     }
 
     constructor() {
-        console.log('[timer]...');
-        this.start();
     }
 
     start() {
+        console.log('[timer]...');
         let that = this;
         for (let i in Map) {
             let timeout = Map[i](true, that);

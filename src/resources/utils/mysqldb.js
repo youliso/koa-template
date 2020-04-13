@@ -49,6 +49,7 @@ class MysqlDb {
 
     //返回单个查询结果
     single(sql, params) {
+        console.log(sql,params)
         const promisePool = this.dbClient.promise();
         return new Promise((resolve, reject) => {
             promisePool.query(sql, params)

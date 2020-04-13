@@ -6,7 +6,6 @@
     "web start": "node src/main/app.js"
   },
   "dependencies": {
-    "async-lock": "^1.2.2",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.3.0",
     "koa-log4": "^2.3.2",

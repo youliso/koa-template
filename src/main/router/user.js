@@ -3,6 +3,12 @@ const Router = require('koa-router');
 const user = new Router();
 const User = require('../info/user');
 
+user.get('/get', async (ctx, next) => {
+    let us = new User();
+    ctx.body = await us.get();
+    await next();
+});
+
 user.post('/login', async (ctx, next) => {
     ctx.body = ctx.result.success('测试');
     await next();
