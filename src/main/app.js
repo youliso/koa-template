@@ -1,4 +1,5 @@
 'use strict';
+const net = require('net');
 const http = require('http');
 const koa = require('koa');
 const static_ = require('koa-static');
@@ -11,9 +12,11 @@ const app = new koa();
 const router = new Router();
 const {httpToken} = require('../resources/utils/token');
 const _ = require('../resources/utils/original');
-const wsIo = require('../resources/utils/ws');
+const io = require('../resources/utils/socket');
 const timer = require('../resources/utils/timer');
-const port = 3000;
+const host='127.0.0.1';
+const port_http= 3000;
+const port_socket= 3001;
 //Origin*
 app.use(cors({
     allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
@@ -34,9 +37,9 @@ app.use(bodyParser());
 app.use(httpToken);
 // static
 app.use(static_(path.join(__dirname, '../resources/static')));
-// router
-fs.readdirSync(__dirname + '/router').forEach((element) => {
-    let module = require(__dirname + '/router/' + element);
+//router_http
+fs.readdirSync(__dirname + '/router_http').forEach((element) => {
+    let module = require(__dirname + '/router_http/' + element);
     router.use('/' + element.replace('.js', ''), module.routes(), module.allowedMethods());
 });
 app.use(router.routes());
@@ -45,12 +48,13 @@ app.use(async (ctx, next) => {
     if (ctx.request.path === '/') ctx.body = "Copyright (c) 2019 youliso";
     if (parseInt(ctx.status) === 404) ctx.body = _.error('无效请求');
 });
-// router - ws
-let wsRouter = {};
-fs.readdirSync(__dirname + '/ws').forEach((element) => {
-    wsRouter[element.replace('.js', '')] = require(__dirname + '/ws/' + element);
+let router_socket = {};
+fs.readdirSync(__dirname + '/router_socket').forEach((element) => {
+    router_socket[element.replace('.js', '')] = require(__dirname + '/router_socket/' + element);
 });
-const server = http.createServer(app.callback());
-wsIo.init(server, wsRouter); //scoket模块
-timer.start();//定时器模块
-server.listen(port, () => console.log(`app run at : http://127.0.0.1:${port}`))
+const app_http = http.createServer(app.callback());
+const app_socket = new net.createServer();
+io.init(app_socket, router_socket); //socket模块
+timer.start().then();//定时器模块
+app_http.listen(port_http,host,() => console.log(`app_http http://${host}:${port_http}`));
+app_socket.listen( port_socket,host, () => console.log(`app_socket：http://${host}:${port_socket}`));

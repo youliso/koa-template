@@ -22,13 +22,13 @@ module.exports = {
                         } else ctx.body = _.error('token已过期');
                     } else ctx.body = _.error('不存在此token');
                 } catch (err) {
-                    _.logger.error(err);
+                    _.logger.application.error(err);
                     ctx.body = _.error('token无效');
                 }
             } else ctx.body = _.error('token无效');
         }
     },
-    wsToken: async (client, token) => {
+    sToken: async (client, token) => {
         if (token) {
             try {
                 let payload = _.crypto.decodeAse(token);
@@ -42,7 +42,7 @@ module.exports = {
                     } else client.send(_.WsError('token已过期'));
                 } else client.send(_.WsError('不存在此token'));
             } catch (err) {
-                _.logger.error(err);
+                _.logger.application.error(err);
                 client.send(_.WsError('token无效'));
             }
         } else client.send(_.WsError('token无效'));
