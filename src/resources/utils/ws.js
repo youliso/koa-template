@@ -20,7 +20,7 @@ class ws {
     broadcast(data, noId) {
         noId = noId || 0;
         for (let i in this.clients) {
-            if (Number(i) !== noId) this.clients[i].send(data);
+            if (Number(i) !== noId) this.clients[i].emit('message',data);
         }
     }
 
@@ -28,7 +28,7 @@ class ws {
     init(ws, router) {
         ws.on('connection', async client => {
             if (_.isNull(client.protocol)) {
-                client.send(_.WsError('Token为空'));
+                client.emit('message',_.WsError('Token为空'));
                 client.close();
                 return;
             }
@@ -39,7 +39,7 @@ class ws {
             }
             client.id = Req.userInfo.id;
             if (this.clients[client.id]) {
-                client.send(_.WsError('重复登录'));
+                client.emit('message',_.WsError('重复登录'));
                 client.close();
                 return;
             }
@@ -52,7 +52,7 @@ class ws {
                 } catch (e) {
                 }
                 if (!message || !message.path || !message.result) {
-                    client.send(_.WsError('参数错误'));
+                    client.emit('message',_.WsError('参数错误'));
                     return;
                 }
                 let path = message.path.split('.');
@@ -79,10 +79,11 @@ class ws {
             });
 
             client.on('error', async err => {
+                client.end();
                 _.logger.application.error(err);
             });
 
-            client.send(JSON.stringify({code: 11, time: new Date().getTime()}));
+            client.emit('message',JSON.stringify({code: 11, time: new Date().getTime()}));
         });
     }
 

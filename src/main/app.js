@@ -5,7 +5,6 @@ const static_ = require('koa-static');
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const cors = require('koa2-cors');
-const WebSocket = require('ws');
 const path = require('path');
 const fs = require('fs');
 const app = new koa();
@@ -52,9 +51,6 @@ fs.readdirSync(__dirname + '/ws').forEach((element) => {
     wsRouter[element.replace('.js', '')] = require(__dirname + '/ws/' + element);
 });
 const server = http.createServer(app.callback());
-const ws = new WebSocket.Server({// 同一个端口监听不同的服务
-    server
-});
-wsIo.init(ws, wsRouter); //ws模块
+wsIo.init(server, wsRouter); //scoket模块
 timer.start();//定时器模块
 server.listen(port, () => console.log(`app run at : http://127.0.0.1:${port}`))
