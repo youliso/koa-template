@@ -2,9 +2,9 @@
 const {noToken} = require('../config');
 const _ = require('./original');
 module.exports = {
-    httpToken: async (ctx, next) => {
+    Token: async (ctx, next) => {
         let url = ctx.request.url.split('?')[0];
-        if (noToken.indexOf(url) > -1 || url.indexOf('/dist') > -1) await next();
+        if (url === "/" || noToken.indexOf(url) > -1 || url.indexOf('/dist') > -1) await next();
         else {
             let token = ctx.request.headers['authorization'];
             if (token) {
@@ -16,7 +16,7 @@ module.exports = {
                         let data = new Date().getTime();
                         if (data <= time) {
                             delete find.pwd;
-                            ctx.userInfo = find;
+                            ctx.userInfo = {...find};
                             ctx.set('Authorization', _.crypto.token(find.id));
                             await next();
                         } else ctx.body = _.error('token已过期');
@@ -27,24 +27,5 @@ module.exports = {
                 }
             } else ctx.body = _.error('token无效');
         }
-    },
-    sToken: async (client, token) => {
-        if (token) {
-            try {
-                let payload = _.crypto.decodeAse(token);
-                let {id, time} = JSON.parse(payload);
-                let find = await _._get('user_info', id);
-                if (find) {
-                    let data = new Date().getTime();
-                    if (data <= time) {
-                        delete find.pwd;
-                        return {userInfo: find, token: _.crypto.token(find.id)}
-                    } else client.send(_.WsError('token已过期'));
-                } else client.send(_.WsError('不存在此token'));
-            } catch (err) {
-                _.logger.application.error(err);
-                client.send(_.WsError('token无效'));
-            }
-        } else client.send(_.WsError('token无效'));
     }
 };

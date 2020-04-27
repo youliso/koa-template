@@ -27,9 +27,9 @@ class original {
         return !arg && arg !== 0 && typeof arg !== "boolean" ? true : false;
     }
 
-    isNullAll(obj) {
+    isNullAll(than,obj) {
         obj = obj || [];
-        for (let i of obj) if (this[i]) return true;
+        for (let i of obj) if (this.isNull(than[i])) return true;
         return false;
     }
 
@@ -40,37 +40,41 @@ class original {
         return data;
     }
 
-    success(msg, data) {
-        return {code: 0, msg, data, time: new Date().getTime()};
+    success(re) {
+        let req = {
+            code: 0,
+            time: new Date().getTime()
+        }
+        if(typeof re === 'string') req.msg = re;
+        else req = {...req,...re};
+        return req;
     }
 
-    error(msg, data) {
-        return {code: -1, msg, data, time: new Date().getTime()};
+    error(re) {
+        let req = {
+            code: -1,
+            time: new Date().getTime()
+        }
+        if(typeof re === 'string') req.msg = re;
+        else req = {...req,...re};
+        return req;
     }
 
-    WsSuccess(msg, result, data) {
-        return JSON.stringify({code: 0, msg, result, data, time: new Date().getTime()});
+    async _add(table, data) {
+        return await this.db.query('insert into '+ table +' set ?', [data]);
     }
 
-    WsError(msg, result, data) {
-        return JSON.stringify({code: -1, msg, result, data, time: new Date().getTime()});
+    async _get(table, id) {
+        if (id) return await this.db.single('select * from ' + table + ' where id = ?', [id]);
+        else return await this.db.first('select * from ' + table);
     }
 
-    _add(table, data) {
-        return this.db.query('insert into ? set ?', [table, data]);
+    async _upd(table, data, id) {
+        return await this.db.query('update ' + table + ' set ? where id = ?', [data, id])
     }
 
-    _get(table, id) {
-        if (id) return this.db.single('select * from ' + table + ' where id = ?', [id]);
-        else return this.db.first('select * from ' + table);
-    }
-
-    _upd(table, data, id) {
-        return this.db.query('update ' + table + ' set ? where id = ?', [data, id])
-    }
-
-    _del(table, id) {
-        return this.db.query('delete from ' + table + ' where id = ?', [id]);
+    async _del(table, id) {
+        return await this.db.query('delete from ' + table + ' where id = ?', [id]);
     }
 }
 

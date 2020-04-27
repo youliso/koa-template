@@ -8,7 +8,7 @@ const {cryptoPassword} = require('../config');
 const encodeMd5 = (text, ks) => {
     ks = ks || cryptoPassword;
     let hmac = crypto.createHmac('md5', ks);
-    return hmac.update(text).digest('hex');
+    return hmac.update(text.toString()).digest('hex');
 };
 
 
@@ -21,7 +21,7 @@ const encodeAes = (text, ks) => {
     const key = crypto.scryptSync(ks, 'salt', 24);
     const iv = Buffer.alloc(16, 0); // 初始化向量。
     const cipher = crypto.createCipheriv('aes-192-cbc', key, iv);
-    let encrypted = cipher.update(text, 'utf8', 'hex');
+    let encrypted = cipher.update(text.toString(), 'utf8', 'hex');
     encrypted += cipher.final('hex');
     return encrypted;
 };
@@ -35,7 +35,7 @@ const decodeAse = (text, ks) => {
     const key = crypto.scryptSync(ks, 'salt', 24);
     const iv = Buffer.alloc(16, 0); // 初始化向量。
     const decipher = crypto.createDecipheriv('aes-192-cbc', key, iv);
-    let decrypted = decipher.update(text, 'hex', 'utf8');
+    let decrypted = decipher.update(text.toString(), 'hex', 'utf8');
     decrypted += decipher.final('utf8');
     return decrypted;
 };
