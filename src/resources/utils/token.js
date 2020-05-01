@@ -4,7 +4,7 @@ const _ = require('./original');
 module.exports = {
     Token: async (ctx, next) => {
         let url = ctx.request.url.split('?')[0];
-        if (url === "/" || noToken.indexOf(url) > -1 || url.indexOf('/dist') > -1) await next();
+        if (url === "/" || noToken.indexOf(url) > -1 || url.indexOf('/public') > -1) await next();
         else {
             let token = ctx.request.headers['authorization'];
             if (token) {

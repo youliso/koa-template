@@ -1,5 +1,4 @@
 'use strict';
-const net = require('net');
 const http = require('http');
 const koa = require('koa');
 const static_ = require('koa-static');
