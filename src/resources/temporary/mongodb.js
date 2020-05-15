@@ -2,7 +2,7 @@
 const Mongodb = require('mongodb');
 const MongoClient = Mongodb.MongoClient;
 const ObjectID = Mongodb.ObjectID;
-const {dbConf} = require('../config');
+const {dbConf} = require('../cfg/config.json');
 
 class Mongodb {
 

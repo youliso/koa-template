@@ -1,5 +1,5 @@
 'use strict';
-const {noToken} = require('../config');
+const {noToken} = require('../cfg/config.json');
 const _ = require('./original');
 module.exports = {
     Token: async (ctx, next) => {

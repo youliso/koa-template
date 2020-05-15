@@ -1,6 +1,6 @@
 'use strict';
 const crypto = require('crypto');
-const {cryptoPassword} = require('../config');
+const {cryptoPassword} = require('../cfg/config.json');
 /**
  * 加密函数Md5
  * @param text  需要加密的内容
@@ -50,9 +50,18 @@ const token = (id) => {
     }));
 };
 
+/**
+ * 随机密码
+ * */
+const randomBytes = (size) =>{
+    let buf = crypto.randomBytes(size);
+    return buf.toString('hex');
+}
+
 module.exports = {
     encodeMd5,
     encodeAes,
     decodeAse,
-    token
+    token,
+    randomBytes
 };

@@ -1,5 +1,5 @@
 'use strict';
-const {db} = require('../config');
+const {db} = require('../cfg/config.json');
 const mysql = require('mysql2');
 
 class MysqlDb {
