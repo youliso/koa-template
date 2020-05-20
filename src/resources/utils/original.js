@@ -40,23 +40,27 @@ class original {
         return data;
     }
 
-    success(re) {
+    success(msg, data) {
         let req = {
+            msg: 'success',
             code: 0,
             time: new Date().getTime()
         }
-        if(typeof re === 'string') req.msg = re;
-        else req = {...req,...re};
+        if (typeof msg === 'string') req.msg = msg;
+        if (typeof msg === 'object') req.data = msg;
+        if (typeof data === 'object') req.data = data;
         return req;
     }
 
-    error(re) {
+    error(msg, data) {
         let req = {
+            msg: 'error',
             code: -1,
             time: new Date().getTime()
         }
-        if(typeof re === 'string') req.msg = re;
-        else req = {...req,...re};
+        if (typeof msg === 'string') req.msg = msg;
+        if (typeof msg === 'object') req.data = msg;
+        if (typeof data === 'object') req.data = data;
         return req;
     }
 

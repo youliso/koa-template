@@ -13,7 +13,7 @@ const {Token} = require('../resources/utils/token');
 const _ = require('../resources/utils/original');
 const io = require('../resources/utils/socket');
 const timer = require('../resources/utils/timer');
-const port= 3000;
+const port = 3000;
 //Origin*
 app.use(cors({
     allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
@@ -49,6 +49,6 @@ fs.readdirSync(__dirname + '/router_socket').forEach((element) => {
 });
 const server = http.createServer(app.callback());
 const socket = require('socket.io')(server);
-new io(socket,router_socket);//socket模块
+new io(socket, router_socket);//socket模块
 timer.start().then();//定时器模块
-server.listen(port,() => console.log(`run http://127.0.0.1:${port}`));
+server.listen(port, () => console.log(`run http://127.0.0.1:${port}`));

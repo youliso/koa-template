@@ -3,7 +3,11 @@ const _ = require('../../resources/utils/original');
 
 class home {
     index(client, ctx) {
-        client.broadcast.send(_.success({msg:'ok',result:ctx.result,data:{test:'test'}}));
+        let data = {
+            result:ctx.result,
+            data:{test:'test'}
+        }
+        client.broadcast.send(_.success('测试',data));
     }
 }
 
