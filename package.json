@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "update": "yarn upgrade-interactive --latest",
+    "update": "npm update",
     "start": "node src/main/app.js"
   },
   "dependencies": {
