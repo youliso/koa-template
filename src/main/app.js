@@ -11,7 +11,7 @@ const app = new koa();
 const router = new Router();
 const {Token} = require('../resources/utils/token');
 const _ = require('../resources/utils/original');
-const io = require('../resources/utils/socket');
+const socketIo = require('../resources/utils/socket');
 const timer = require('../resources/utils/timer');
 const port = 3000;
 //Origin*
@@ -49,6 +49,7 @@ fs.readdirSync(__dirname + '/router_socket').forEach((element) => {
 });
 const server = http.createServer(app.callback());
 const socket = require('socket.io')(server);
-new io(socket, router_socket);//socket模块
+socketIo.creator(socket, router_socket);//socket模块初始化
+socketIo.init();//socket模块开启
 timer.start().then();//定时器模块
 server.listen(port, () => console.log(`run http://127.0.0.1:${port}`));

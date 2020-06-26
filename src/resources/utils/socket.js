@@ -3,16 +3,26 @@ const _ = require('./original');
 
 class socket {
 
-    constructor(io,router) {
-        this.io = io;
-        this.router = router;
-        this.clients = {};
-        this.init();
-        console.log('[socket]...');
+    static getInstance() {
+        if (!socket.instance) socket.instance = new socket();
+        return socket.instance;
+    }
+
+    constructor() {
+    }
+
+    creator(io, router) {
+        if (io && router) {
+            this.io = io;
+            this.router = router;
+            this.clients = {};
+            this.init();
+            console.log('[socket]...');
+        }
     }
 
     //获取用户信息
-    async getUserIfo(Authorization){
+    async getUserIfo(Authorization) {
         try {
             let payload = _.crypto.decodeAse(Authorization);
             let {id} = JSON.parse(payload);
@@ -29,13 +39,13 @@ class socket {
         setInterval(async () => {
             for (let i in this.clients) {
                 let item = this.clients[i];
-                if(item) item.socket.send({code:11,data:_.crypto.token(item.id)});
+                if (item) item.socket.send({code: 11, data: _.crypto.token(item.id)});
             }
         }, 1000 * 60 * 90);
     }
 
     //初始化
-     init() {
+    init() {
         this.tokenRefresh();
         this.io.on('connection', async client => {
             if (_.isNull(client.request._query.Authorization)) {
@@ -88,4 +98,4 @@ class socket {
 
 }
 
-module.exports = socket;
+module.exports = socket.getInstance();
