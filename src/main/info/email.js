@@ -1,4 +1,4 @@
-const _ = require('../../resources/utils/original');
+const _ = require('../../resources/utils/lib/original');
 const eTemplate = require('../../resources/utils/eTemplate');
 const nodeMailer = require('nodemailer');
 

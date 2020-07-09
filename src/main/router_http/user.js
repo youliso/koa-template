@@ -1,6 +1,6 @@
 'use strict';
 const Router = require('koa-router');
-const _ = require('../../resources/utils/original');
+const _ = require('../../resources/utils/lib/original');
 const user = new Router();
 const User = require('../info/user');
 

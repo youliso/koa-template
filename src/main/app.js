@@ -6,13 +6,12 @@ const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const cors = require('koa2-cors');
 const path = require('path');
-const fs = require('fs');
+const {readdirSync} = require('fs');
 const app = new koa();
 const router = new Router();
-const {Token} = require('../resources/utils/token');
-const _ = require('../resources/utils/original');
-const socketIo = require('../resources/utils/socket');
-const timer = require('../resources/utils/timer');
+const _ = require('../resources/utils/lib/original');
+const socketIo = require('../resources/utils/lib/socket');
+const timer = require('../resources/utils/lib/timer');
 const port = 3000;
 //Origin*
 app.use(cors({
@@ -27,24 +26,24 @@ app.use(async (ctx, next) => {
     if (parseInt(ctx.status) === 404) ctx.body = _.error('无效请求');
 });
 //logger
-app.use(_.logger.accessLogger);
+app.use(_.logger.access);
 //error
-app.on('error', err => _.logger.application.error(err));
+app.on('error', err => _.logger.error(err));
 // bodyParser
 app.use(bodyParser());
 //token
-app.use(Token);
+app.use(_.token.use);
 // static
 app.use(static_(path.join(__dirname, '../resources/static')));
 //router_http
-fs.readdirSync(__dirname + '/router_http').forEach((element) => {
+readdirSync(__dirname + '/router_http').forEach((element) => {
     let module = require(__dirname + '/router_http/' + element);
     router.use('/' + element.replace('.js', ''), module.routes(), module.allowedMethods());
 });
 app.use(router.routes());
 
 let router_socket = {};
-fs.readdirSync(__dirname + '/router_socket').forEach((element) => {
+readdirSync(__dirname + '/router_socket').forEach((element) => {
     router_socket[element.replace('.js', '')] = require(__dirname + '/router_socket/' + element);
 });
 const server = http.createServer(app.callback());
@@ -52,4 +51,7 @@ const socket = require('socket.io')(server);
 socketIo.creator(socket, router_socket);//socket模块初始化
 socketIo.init();//socket模块开启
 timer.start().then();//定时器模块
-server.listen(port, () => console.log(`run http://127.0.0.1:${port}`));
+server.listen(port, () => {
+    console.log(`[success] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
+    console.log(`[start] http://127.0.0.1:${port}`)
+});

@@ -1,8 +1,19 @@
 'use strict';
-const {noToken} = require('../cfg/config.json');
+const {noToken} = require('../../cfg/config.json');
 const _ = require('./original');
-module.exports = {
-    Token: async (ctx, next) => {
+
+class token {
+
+    static getInstance() {
+        if (!token.instance) token.instance = new token();
+        return token.instance;
+    }
+
+    constructor() {
+        console.log(`[token] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
+    }
+
+    async use(ctx, next) {
         let url = ctx.request.url.split('?')[0];
         if (url === "/" || noToken.indexOf(url) > -1 || url.indexOf('/public') > -1) await next();
         else {
@@ -22,10 +33,12 @@ module.exports = {
                         } else ctx.body = _.error('token已过期');
                     } else ctx.body = _.error('不存在此token');
                 } catch (err) {
-                    _.logger.application.error(err);
+                    _.logger.error(err);
                     ctx.body = _.error('token无效');
                 }
             } else ctx.body = _.error('token无效');
         }
     }
-};
+}
+
+module.exports = token.getInstance();

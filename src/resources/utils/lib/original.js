@@ -1,7 +1,3 @@
-const db = require('./mysqldb');
-const crypto = require('./crypto');
-const logger = require('./logger');
-
 class original {
 
     static getInstance() {
@@ -10,9 +6,10 @@ class original {
     }
 
     constructor() {
-        this.crypto = crypto;
-        this.logger = logger;
-        this.db = db;
+        this.logger = require('./logger');
+        this.db = require('./mysqldb');
+        this.crypto = require('./crypto');
+        this.token = require('./token');
     }
 
     trim(str) {
@@ -27,7 +24,7 @@ class original {
         return !arg && arg !== 0 && typeof arg !== "boolean" ? true : false;
     }
 
-    isNullAll(than,obj) {
+    isNullAll(than, obj) {
         obj = obj || [];
         for (let i of obj) if (this.isNull(than[i])) return true;
         return false;
@@ -65,7 +62,7 @@ class original {
     }
 
     async _add(table, data) {
-        return await this.db.query('insert into '+ table +' set ?', [data]);
+        return await this.db.query('insert into ' + table + ' set ?', [data]);
     }
 
     async _get(table, id) {

@@ -9,6 +9,7 @@ class socket {
     }
 
     constructor() {
+        console.log(`[socket] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
     }
 
     creator(io, router) {
@@ -17,7 +18,6 @@ class socket {
             this.router = router;
             this.clients = {};
             this.init();
-            console.log('[socket]...');
         }
     }
 

@@ -22,10 +22,10 @@ class timer {
     }
 
     constructor() {
+        console.log(`[timer] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
     }
 
     async start() {
-        console.log('[timer]...');
         let that = this;
         for (let i in Map) {
             let timeout = await Map[i](true, that);

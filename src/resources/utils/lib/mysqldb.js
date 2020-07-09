@@ -1,5 +1,5 @@
 'use strict';
-const {db} = require('../cfg/config.json');
+const {db} = require('../../cfg/config.json');
 const mysql = require('mysql2');
 
 class MysqlDb {
@@ -12,6 +12,7 @@ class MysqlDb {
     constructor() {
         this.dbClient = '';
         this.connect();
+        console.log(`[mysql] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
     }
 
     connect() {  /*连接数据库*/
@@ -23,7 +24,6 @@ class MysqlDb {
                 database: db.database,
                 charset: 'utf8mb4'
             });
-            console.log('[mysql]...');
         }
     }
 
