@@ -5,7 +5,7 @@ const static_ = require('koa-static');
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const cors = require('koa2-cors');
-const path = require('path');
+const {join} = require('path');
 const {readdirSync} = require('fs');
 const app = new koa();
 const router = new Router();
@@ -34,7 +34,7 @@ app.use(bodyParser());
 //token
 app.use(_.token.use);
 // static
-app.use(static_(path.join(__dirname, '../resources/static')));
+app.use(static_(join(__dirname, '../resources/static')));
 //router_http
 readdirSync(__dirname + '/router_http').forEach((element) => {
     let module = require(__dirname + '/router_http/' + element);
