@@ -27,7 +27,7 @@ class MysqlDb {
                 .then(res => resolve(res))
                 .catch(err => reject(err));
         });
-    };
+    }
 
     //返回一个对象
     first(sql, params) {
@@ -37,7 +37,7 @@ class MysqlDb {
                 .then(res => resolve(res[0] || null))
                 .catch(err => reject(err));
         });
-    };
+    }
 
     //返回单个查询结果
     single(sql, params) {
@@ -54,7 +54,7 @@ class MysqlDb {
                 })
                 .catch(err => reject(err));
         });
-    };
+    }
 
     //执行代码，返回执行结果
     query(sql, params) {
@@ -64,7 +64,7 @@ class MysqlDb {
                 .then(res => resolve(res))
                 .catch(err => reject(err));
         });
-    };
+    }
 
     //执行代码，返回执行结果
     execute(sql, params) {
@@ -74,7 +74,7 @@ class MysqlDb {
                 .then(res => resolve(res))
                 .catch(err => reject(err));
         })
-    };
+    }
 
     escape(c) {
         return this.dbClient.escape(c);

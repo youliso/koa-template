@@ -1,8 +1,6 @@
 {
   "domainWhiteList": [
-    "https://www.youliso.com",
-    "https://youliso.com",
-    "http://127.0.0.1:3002"
+    "http://localhost:3002"
   ],
   "port": 3002,
   "db": {

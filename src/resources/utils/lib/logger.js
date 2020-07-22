@@ -42,6 +42,7 @@ class logger {
     }
 
     async access(ctx, next) {
+        console.log(ctx);
         log4js.getLogger('access').info(`${ctx.originalUrl} ${ctx.header.host} ${ctx.header['user-agent']}`);
         await next();
     }
