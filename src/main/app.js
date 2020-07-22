@@ -9,6 +9,7 @@ const {join} = require('path');
 const {readdirSync} = require('fs');
 const app = new koa();
 const router = new Router();
+const token = require('../resources/utils/lib/token');
 const _ = require('../resources/utils/lib/original');
 const socketIo = require('../resources/utils/lib/socket');
 const timer = require('../resources/utils/lib/timer');
@@ -32,7 +33,7 @@ app.on('error', err => _.logger.error(err));
 // bodyParser
 app.use(bodyParser());
 //token
-app.use(_.token.use);
+app.use(token.use);
 // static
 app.use(static_(join(__dirname, '../resources/static')));
 //router_http

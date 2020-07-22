@@ -10,7 +10,6 @@ class original {
         this.logger = require('./logger');
         this.db = require('./mysqldb');
         this.crypto = require('./crypto');
-        this.token = require('./token');
     }
 
     trim(str) {

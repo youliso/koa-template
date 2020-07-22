@@ -41,8 +41,9 @@ class logger {
         })
     }
 
-    access(e) {
-        log4js.getLogger('access').info(`${e.originalUrl} ${e.header.host} ${e.header['user-agent']}`);
+    async access(ctx, next) {
+        log4js.getLogger('access').info(`${ctx.originalUrl} ${ctx.header.host} ${ctx.header['user-agent']}`);
+        await next();
     }
 
     error(e) {
