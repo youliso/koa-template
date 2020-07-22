@@ -13,9 +13,12 @@ const token = require('../resources/utils/lib/token');
 const _ = require('../resources/utils/lib/original');
 const socketIo = require('../resources/utils/lib/socket');
 const timer = require('../resources/utils/lib/timer');
-const port = 3000;
-//Origin*
+//Origin
 app.use(cors({
+    origin: (ctx) => {
+        let url = ctx.header.referer.substr(0, ctx.header.referer.length - 1);
+        if (_.config.domainWhiteList.includes(url)) return url; //可访问白名单
+    },
     allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
     exposeHeaders: ['Content-Type', 'Authorization'] //设置获取其他自定义字段
 }));
@@ -52,7 +55,7 @@ const socket = require('socket.io')(server);
 socketIo.creator(socket, router_socket);//socket模块初始化
 socketIo.init();//socket模块开启
 timer.start().then();//定时器模块
-server.listen(port, () => {
+server.listen(_.config.port, () => {
     console.log(`[success] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
-    console.log(`[start] http://127.0.0.1:${port}`)
+    console.log(`[start] http://127.0.0.1:${_.config.port}`)
 });

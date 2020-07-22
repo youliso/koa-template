@@ -16,15 +16,7 @@ class MysqlDb {
     }
 
     connect() {  /*连接数据库*/
-        if (!this.dbClient) {
-            this.dbClient = mysql.createPool({
-                host: db.host,
-                user: db.user,
-                password: db.password,
-                database: db.database,
-                charset: 'utf8mb4'
-            });
-        }
+        if (!this.dbClient) this.dbClient = mysql.createPool(db);
     }
 
     //将结果已对象数组返回
@@ -49,7 +41,7 @@ class MysqlDb {
 
     //返回单个查询结果
     single(sql, params) {
-        console.log(sql,params)
+        console.log(sql, params)
         const promisePool = this.dbClient.promise();
         return new Promise((resolve, reject) => {
             promisePool.query(sql, params)

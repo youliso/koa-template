@@ -7,6 +7,7 @@ class original {
     }
 
     constructor() {
+        this.config = require('../../cfg/config.json');
         this.logger = require('./logger');
         this.db = require('./mysqldb');
         this.crypto = require('./crypto');
