@@ -54,5 +54,5 @@ socketIo.init();//socket模块开启
 timer.start().then();//定时器模块
 server.listen(_.config.port, () => {
     console.log(`[success] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
-    console.log(`[start] ${_.config.domainWhiteList}`)
+    console.log(`[start] ${_.config.domainWhiteList[0]}`)
 });
