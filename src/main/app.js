@@ -15,7 +15,11 @@ const socketIo = require('../resources/utils/lib/socket');
 const timer = require('../resources/utils/lib/timer');
 //Origin
 app.use(cors({
-    origin: _.config.domainWhiteList, //域名白名单
+    origin: (ctx) => {
+        let i = _.config.domainWhiteList.indexOf(ctx.header.origin);//域名白名单
+        if (i > -1) return _.config.domainWhiteList[i];
+        else return null;
+    },
     allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
     exposeHeaders: ['Content-Type', 'Authorization'] //设置获取其他自定义字段
 }));
@@ -54,5 +58,5 @@ socketIo.init();//socket模块开启
 timer.start().then();//定时器模块
 server.listen(_.config.port, () => {
     console.log(`[success] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
-    console.log(`[start] ${_.config.domainWhiteList[0]}`)
+    console.log(`[port] http://127.0.0.1:${_.config.port}`);
 });
