@@ -1,5 +1,4 @@
 'use strict';
-const {db} = require('../../../cfg/config.json');
 const mysql = require('mysql2');
 
 class MysqlDb {
@@ -11,12 +10,13 @@ class MysqlDb {
 
     constructor() {
         this.dbClient = '';
-        this.connect();
-        console.log(`[mysql] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
     }
 
-    connect() {  /*连接数据库*/
-        if (!this.dbClient) this.dbClient = mysql.createPool(db.main);
+    connect(db) {  /*连接数据库*/
+        if (!this.dbClient) {
+            this.dbClient = mysql.createPool(db);
+            console.log(`[mysql] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
+        }
     }
 
     //将结果已对象数组返回

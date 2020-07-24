@@ -1,4 +1,5 @@
 'use strict';
+
 class original {
 
     static getInstance() {
@@ -9,8 +10,12 @@ class original {
     constructor() {
         this.config = require('../../cfg/config.json');
         this.logger = require('./logger');
-        this.db = require('./db/mysqldb');
         this.crypto = require('./crypto');
+        this.db = {};
+        for (let i in this.config.db) {
+            this.db[i] = require(`./db/${this.config.db[i].type}`);
+            this.db[i].connect(this.config.db[i].data);
+        }
     }
 
     trim(str) {
@@ -63,20 +68,20 @@ class original {
     }
 
     async _add(table, data) {
-        return await this.db.query('insert into ' + table + ' set ?', [data]);
+        return await this.db.main.query('insert into ' + table + ' set ?', [data]);
     }
 
     async _get(table, id) {
-        if (id) return await this.db.single('select * from ' + table + ' where id = ?', [id]);
-        else return await this.db.first('select * from ' + table);
+        if (id) return await this.db.main.single('select * from ' + table + ' where id = ?', [id]);
+        else return await this.db.main.first('select * from ' + table);
     }
 
     async _upd(table, data, id) {
-        return await this.db.query('update ' + table + ' set ? where id = ?', [data, id])
+        return await this.db.main.query('update ' + table + ' set ? where id = ?', [data, id])
     }
 
     async _del(table, id) {
-        return await this.db.query('delete from ' + table + ' where id = ?', [id]);
+        return await this.db.main.query('delete from ' + table + ' where id = ?', [id]);
     }
 }
 

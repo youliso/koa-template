@@ -1,5 +1,4 @@
 'use strict';
-const {db} = require('../../../cfg/config.json');
 const redis = require('redis');
 
 class redisDb {
@@ -11,18 +10,16 @@ class redisDb {
 
     constructor() {
         this.dbClient = '';
-        this.connect();
-        console.log(`[redis] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
     }
 
-    connect() {  /*连接数据库*/
+    connect(db) {  /*连接数据库*/
         if (!this.dbClient) {
-            this.dbClient = redis.createClient(db.vice1);
+            this.dbClient = redis.createClient(db);
             this.dbClient.on('error', function (err) {
                 console.log('redis error：' + err);
             });
             this.dbClient.on('connect', function () {
-                console.log('redis连接成功...')
+                console.log(`[redis] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
             });
         }
     }
@@ -68,6 +65,28 @@ class redisDb {
                     return;
                 }
                 this.dbClient.get(key, (err, res) => {
+                    if (err) {
+                        reject(err);
+                        return
+                    }
+                    resolve(res);
+                })
+            })
+        })
+    }
+
+    /**
+     * @param dbNum 库号
+     * @param key 键
+     */
+    del(dbNum, key) {
+        return new Promise((resolve, reject) => {
+            this.dbClient.select(dbNum, (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                this.dbClient.del(key, (err, res) => {
                     if (err) {
                         reject(err);
                         return

@@ -45,7 +45,7 @@ class Email {
     }
 
     async get() {
-        let req = await _.db.single('select * from ? where email=?', [this.TABLE_NAME, this.email]);
+        let req = await _.db.main.single('select * from ? where email=?', [this.TABLE_NAME, this.email]);
         if (req && Number(req.endtime) > new Date().getTime()) return req;
         else {
             if (req) await this.del(req.id);

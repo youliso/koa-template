@@ -2,7 +2,6 @@
 const Mongodb = require('src/resources/utils/lib/db/mongodb');
 const MongoClient = Mongodb.MongoClient;
 const ObjectID = Mongodb.ObjectID;
-const {dbConf} = require('../../../cfg/config.json');
 
 class Mongodb {
 
@@ -13,17 +12,16 @@ class Mongodb {
 
     constructor() {
         this.dbClient = '';
-        this.connect();
     }
 
-    connect() {  /*连接数据库*/
+    connect(db) {  /*连接数据库*/
         return new Promise((resolve, reject) => {
             if (!this.dbClient) {
                 MongoClient
-                    .connect(dbConf.url, {useUnifiedTopology: true})
+                    .connect(db.url, {useUnifiedTopology: true})
                     .then((e) => {
                         console.log("数据库链接成功");
-                        this.dbClient = e.db(dbConf.name);
+                        this.dbClient = e.db(db.name);
                         resolve(this.dbClient)
                     })
                     .catch(err => {
