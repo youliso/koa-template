@@ -1,8 +1,8 @@
 'use strict';
-const Mongodb = require('mongodb');
+const Mongodb = require('src/resources/utils/lib/db/mongodb');
 const MongoClient = Mongodb.MongoClient;
 const ObjectID = Mongodb.ObjectID;
-const {dbConf} = require('../cfg/config.json');
+const {dbConf} = require('../../../cfg/config.json');
 
 class Mongodb {
 

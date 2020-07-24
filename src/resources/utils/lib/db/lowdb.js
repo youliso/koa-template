@@ -1,9 +1,9 @@
 'use strict';
-const low = require('lowdb');
+const low = require('src/resources/utils/lib/db/lowdb');
 const Result = require('../../main/Info/Result');
 const FileSync = require('lowdb/adapters/FileSync');
 const shortId = require('shortid');
-const conf = require('../cfg/config.json').db;
+const conf = require('../../../cfg/config.json').db;
 const db = {
     userInfo: low(new FileSync('src/resources/db/userInfo.json'))
 };

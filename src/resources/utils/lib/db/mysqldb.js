@@ -1,5 +1,5 @@
 'use strict';
-const {db} = require('../../cfg/config.json');
+const {db} = require('../../../cfg/config.json');
 const mysql = require('mysql2');
 
 class MysqlDb {
@@ -16,7 +16,7 @@ class MysqlDb {
     }
 
     connect() {  /*连接数据库*/
-        if (!this.dbClient) this.dbClient = mysql.createPool(db);
+        if (!this.dbClient) this.dbClient = mysql.createPool(db.main);
     }
 
     //将结果已对象数组返回

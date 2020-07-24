@@ -1,4 +1,5 @@
 'use strict';
+const {db} = require('../../../cfg/config.json');
 const redis = require('redis');
 
 class redisDb {
@@ -16,7 +17,7 @@ class redisDb {
 
     connect() {  /*连接数据库*/
         if (!this.dbClient) {
-            this.dbClient = redis.createClient();
+            this.dbClient = redis.createClient(db.vice1);
             this.dbClient.on('error', function (err) {
                 console.log('redis error：' + err);
             });
