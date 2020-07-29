@@ -1,5 +1,4 @@
 const _ = require('../utils/lib/original');
-const {encodeMd5} = require('../utils/lib/crypto');
 
 /**
  * 用户信息结构
@@ -13,7 +12,7 @@ class User {
         info = info || {};
         this.id = _.trim(info.id);
         this.name = _.trim(info.email);
-        this.pwd = _.trim(info.pwd) ? encodeMd5(_.trim(info.pwd)) : null;
+        this.pwd = _.trim(info.pwd) ? _.crypto.encodeMd5(_.trim(info.pwd)) : null;
     }
 
     async get(obj) {
@@ -21,8 +20,8 @@ class User {
             let data = null, ss = new Date().getSeconds();
             if (obj) data = await _._get(obj);
             else data = await _._get(this.TABLE_NAME)
-            console.log(ss,data[0].level)
-            if(ss === data[0].level)  return _.success('sss', data);
+            console.log(ss, data[0].level)
+            if (ss === data[0].level) return _.success('sss', data);
             await _._upd(this.TABLE_NAME, {level: new Date().getSeconds()}, 1);
             return _.success('查询成功', data);
         } catch (err) {
