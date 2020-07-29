@@ -5,12 +5,20 @@ const Map = {
     //test1
     test1: async (is) => {
         if (is) return 1000; //毫秒、秒、分、时
-        // console.log('test1');
+        try {
+            // console.log('test1');
+        } catch (e) {
+            _.logger.error(e);
+        }
     },
     //test2
     test2: async (is) => {
         if (is) return '* 5 * * * *'; //秒、分、时、日、月、周几
-        // console.log('test2');
+        try {
+            // console.log('test2');
+        } catch (e) {
+            _.logger.error(e);
+        }
     }
 };
 
@@ -22,7 +30,6 @@ class timer {
     }
 
     constructor() {
-        console.log(`[timer] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
     }
 
     async start() {
@@ -31,11 +38,11 @@ class timer {
             let timeout = await Map[i](true, that);
             if (typeof timeout === 'number') {
                 setInterval(async () => {
-                    await Map[i](false, that)
+                    Map[i](false, that);
                 }, timeout)
             } else if (typeof timeout === 'string') {
-                schedule.scheduleJob(timeout,async () => {
-                    await Map[i](false, that)
+                schedule.scheduleJob(timeout, async () => {
+                    Map[i](false, that);
                 });
             }
         }

@@ -9,10 +9,10 @@ const {join} = require('path');
 const {readdirSync} = require('fs');
 const app = new koa();
 const router = new Router();
-const token = require('../resources/utils/lib/token');
-const _ = require('../resources/utils/lib/original');
-const socketIo = require('../resources/utils/lib/socket');
-const timer = require('../resources/utils/lib/timer');
+const token = require('./utils/lib/token');
+const _ = require('./utils/lib/original');
+const socketIo = require('./utils/lib/socket');
+const timer = require('./utils/lib/timer');
 //Origin
 app.use(cors({
     origin: (ctx) => {
@@ -46,7 +46,6 @@ readdirSync(__dirname + '/router_http').forEach((element) => {
     router.use('/' + element.replace('.js', ''), module.routes(), module.allowedMethods());
 });
 app.use(router.routes());
-
 let router_socket = {};
 readdirSync(__dirname + '/router_socket').forEach((element) => {
     router_socket[element.replace('.js', '')] = require(__dirname + '/router_socket/' + element);

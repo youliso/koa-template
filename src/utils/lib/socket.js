@@ -9,7 +9,7 @@ class socket {
     }
 
     constructor() {
-        console.log(`[socket] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
+
     }
 
     creator(io, router) {
@@ -91,7 +91,7 @@ class socket {
             client.on('error', async err => {
                 console.log('error');
                 client.disconnect(true);
-                _.logger.application.error(err);
+                _.logger.error(err);
             });
         });
     }

@@ -12,15 +12,11 @@ class redisDb {
         this.dbClient = '';
     }
 
-    connect(db) {  /*连接数据库*/
+    connect(db, logger) {  /*连接数据库*/
         if (!this.dbClient) {
+            this.logger = logger;
             this.dbClient = redis.createClient(db);
-            this.dbClient.on('error', function (err) {
-                console.log('redis error：' + err);
-            });
-            this.dbClient.on('connect', function () {
-                console.log(`[redis] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
-            });
+            this.dbClient.on('error', (err) => this.logger.error(err));
         }
     }
 

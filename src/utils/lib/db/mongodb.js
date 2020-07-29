@@ -1,5 +1,5 @@
 'use strict';
-const Mongodb = require('src/resources/utils/lib/db/mongodb');
+const Mongodb = require('src/utils/lib/db/mongodb');
 const MongoClient = Mongodb.MongoClient;
 const ObjectID = Mongodb.ObjectID;
 
@@ -14,7 +14,8 @@ class Mongodb {
         this.dbClient = '';
     }
 
-    connect(db) {  /*连接数据库*/
+    connect(db, logger) {  /*连接数据库*/
+        this.logger = logger;
         return new Promise((resolve, reject) => {
             if (!this.dbClient) {
                 MongoClient

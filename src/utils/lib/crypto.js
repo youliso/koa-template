@@ -1,6 +1,6 @@
 'use strict';
 const cryptos = require('crypto');
-const {cryptoPassword} = require('../../cfg/config.json');
+const {cryptoPassword} = require('../../../resources/cfg/config.json');
 
 class crypto {
 
@@ -10,7 +10,6 @@ class crypto {
     }
 
     constructor() {
-        console.log(`[crypto] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
     }
 
     /**

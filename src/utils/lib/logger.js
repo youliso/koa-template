@@ -10,7 +10,6 @@ class logger {
     }
 
     constructor() {
-        console.log(`[logger] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
         log4js.configure({
             appenders: {
                 access: {
@@ -42,7 +41,6 @@ class logger {
     }
 
     async access(ctx, next) {
-        console.log(ctx);
         log4js.getLogger('access').info(`${ctx.originalUrl} ${ctx.header.host} ${ctx.header['user-agent']}`);
         await next();
     }

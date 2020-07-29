@@ -1,5 +1,5 @@
-const _ = require('../../resources/utils/lib/original');
-const {encodeMd5} = require('../../resources/utils/lib/crypto');
+const _ = require('../utils/lib/original');
+const {encodeMd5} = require('../utils/lib/crypto');
 
 /**
  * 用户信息结构

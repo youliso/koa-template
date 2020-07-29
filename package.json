@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "update": "npm update",
-    "start": "node src/main/app.js"
+    "start": "node src/app.js"
   },
   "dependencies": {
     "koa": "^2.11.0",

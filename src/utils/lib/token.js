@@ -1,5 +1,5 @@
 'use strict';
-const {noToken} = require('../../cfg/config.json');
+const {noToken} = require('../../../resources/cfg/config.json');
 const _ = require('./original');
 
 class token {
@@ -10,7 +10,6 @@ class token {
     }
 
     constructor() {
-        console.log(`[token] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
     }
 
     async use(ctx, next) {

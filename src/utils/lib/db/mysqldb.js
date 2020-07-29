@@ -12,10 +12,10 @@ class MysqlDb {
         this.dbClient = '';
     }
 
-    connect(db) {  /*连接数据库*/
+    connect(db, logger) {  /*连接数据库*/
         if (!this.dbClient) {
+            this.logger = logger;
             this.dbClient = mysql.createPool(db);
-            console.log(`[mysql] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
         }
     }
 

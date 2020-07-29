@@ -1,5 +1,5 @@
 'use strict';
-const _ = require('../../resources/utils/lib/original');
+const _ = require('../utils/lib/original');
 
 class home {
     index(client, ctx) {
