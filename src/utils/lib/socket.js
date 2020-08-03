@@ -12,15 +12,6 @@ class socket {
 
     }
 
-    creator(io, router) {
-        if (io && router) {
-            this.io = io;
-            this.router = router;
-            this.clients = {};
-            this.init();
-        }
-    }
-
     //获取用户信息
     async getUserIfo(Authorization) {
         try {
@@ -45,7 +36,10 @@ class socket {
     }
 
     //初始化
-    init() {
+    init(io, router) {
+        this.io = io;
+        this.router = router;
+        this.clients = {};
         this.tokenRefresh();
         this.io.on('connection', async client => {
             if (_.isNull(client.request._query.Authorization)) {
