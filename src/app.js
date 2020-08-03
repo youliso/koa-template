@@ -19,8 +19,7 @@ app.on('error', err => _.logger.error(err));
 app.use(cors({
     origin: (ctx) => {
         let i = _.config.domainWhiteList.indexOf(ctx.header.origin);//域名白名单
-        if (i > -1) return _.config.domainWhiteList[i];
-        else return null;
+        return _.config.domainWhiteList[i] || null;
     },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
@@ -28,9 +27,10 @@ app.use(cors({
 }));
 //init
 app.use(async (ctx, next) => {
+    if (!ctx.header.origin) return;
     if (ctx.path === '/favicon.ico') return;
+    if (parseInt(ctx.status) === 404) return;
     if (ctx.request.path === '/') ctx.body = "Copyright (c) 2020 youliso";
-    if (parseInt(ctx.status) === 404) ctx.body = _.error('无效请求');
     _.logger.access(`${ctx.originalUrl} ${ctx.header.host} ${ctx.header['user-agent']}`);
     await next();
 });
