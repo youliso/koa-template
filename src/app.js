@@ -29,9 +29,9 @@ app.use(cors({
 app.use(async (ctx, next) => {
     if (!ctx.header.origin) return;
     if (ctx.path === '/favicon.ico') return;
-    if (parseInt(ctx.status) === 404) return;
-    if (ctx.request.path === '/') ctx.body = "Copyright (c) 2020 youliso";
-    _.logger.access(`${ctx.originalUrl} ${ctx.header.host} ${ctx.header['user-agent']}`);
+    if (parseInt(ctx.status) === 404) ctx.body = _.error('无效请求');
+    if (ctx.request.path === '/') ctx.body = _.success('Copyright (c) 2020 youliso');
+    _.logger.access(`${ctx.originalUrl} ${ctx.header['x-real-ip']} ${ctx.header['user-agent']}`);
     await next();
 });
 //bodyParser
