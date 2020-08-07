@@ -14,7 +14,7 @@ class original {
         this.db = {};
         for (let i in this.config.db) {
             this.db[i] = require(`./db/${this.config.db[i].type}`);
-            this.db[i].connect(this.config.db[i].data);
+            this.db[i].connect(this.config.db[i].data,this.logger);
         }
     }
 
