@@ -25,7 +25,7 @@ class User {
             await _._upd(this.TABLE_NAME, {level: new Date().getSeconds()}, 1);
             return _.success('查询成功', data);
         } catch (err) {
-            _.logger.application.error(err);
+            _.logger.error(err);
             return _.error('查询失败');
         }
     }
@@ -35,7 +35,7 @@ class User {
             let data = _.getAll(obj);
             await _._add(this.TABLE_NAME, data);
         } catch (err) {
-            _.logger.application.error(err);
+            _.logger.error(err);
             return _.error('注册失败');
         }
     }
