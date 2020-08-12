@@ -13,17 +13,13 @@ const token = require('./utils/lib/token');
 const _ = require('./utils/lib/original');
 const socketIo = require('./utils/lib/socket');
 const timer = require('./utils/lib/timer');
-//onerror [-1]:不记录
-app.on('error', err => {
-    let i = 0;
-    i = err.message.indexOf('[-1]');
-    if (i === 0) _.logger.error(err)
-});
+//onerror
+app.on('error', err => _.logger.error(err));
 //origin
 app.use(cors({
     origin: (ctx) => {
         let i = _.config.domainWhiteList.indexOf(ctx.header.origin);//域名白名单
-        if (i === -1 || ctx.path === '/favicon.ico') throw "非法请求[-1]";
+        if (i === -1 || ctx.path === '/favicon.ico') ctx.throw(400, '无效访问');
         return _.config.domainWhiteList[i] || null;
     },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
