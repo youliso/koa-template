@@ -28,10 +28,9 @@ app.use(cors({
 }));
 //init
 app.use(async (ctx, next) => {
-    if (parseInt(ctx.status) === 404) ctx.body = _.error('无效请求');
+    await next();
     if (ctx.request.path === '/') ctx.body = _.success('Copyright (c) 2020 youliso');
     _.logger.access(`${ctx.originalUrl} ${ctx.header['x-real-ip']} ${ctx.header['user-agent']}`);
-    await next();
 });
 //bodyParser
 app.use(bodyParser());
