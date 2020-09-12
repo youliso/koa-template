@@ -4,16 +4,14 @@
     "moduleResolution": "node",
     "suppressImplicitAnyIndexErrors": true,
     "noImplicitAny": true,
+    "inlineSources": false,
     "sourceMap": false,
     "outDir": "dist",
     "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"]
-    },
     "target": "ES2019",
     "allowJs": true
   },
-  "include": [
-    "src/**/*"
+  "exclude": [
+    "node_modules"
   ]
 }

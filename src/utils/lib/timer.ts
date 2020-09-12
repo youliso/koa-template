@@ -2,6 +2,7 @@ import {scheduleJob} from 'node-schedule';
 // import fetch from 'node-fetch';
 // import {} from 'cheerio';
 import _ from './original';
+import Logger from "./logger";
 
 class Timer {
     private static instance: Timer;
@@ -18,7 +19,7 @@ class Timer {
             try {
                 // console.log('test1');
             } catch (e) {
-                _.logger.error(e);
+                Logger.error(e);
             }
         };
         this.maps['test2'] = async (is) => {
@@ -26,7 +27,7 @@ class Timer {
             try {
                 // console.log('test2');
             } catch (e) {
-                _.logger.error(e);
+                Logger.error(e);
             }
         };
     }

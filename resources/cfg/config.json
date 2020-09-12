@@ -16,7 +16,7 @@
     }
   },
   "noToken": [
-    "/user/get",
+    "/index/get",
     "/user/login",
     "/user/register"
   ],

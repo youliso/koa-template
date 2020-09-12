@@ -1,7 +1,7 @@
 import {createPool, Pool, escape} from 'mysql2';
 
 export default class Mysqldb {
-    dbClient: Pool = null;
+    dbClient: Pool;
 
     constructor(db: object) {
         this.dbClient = createPool(db);

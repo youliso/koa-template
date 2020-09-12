@@ -3,13 +3,11 @@ import MysqlDb from './db/mysqldb';
 import RedisDb from './db/redisdb';
 import Crypto from './crypto';
 import Logger from './logger';
+const Config = require('../../../resources/cfg/config.json');
 
 class Original {
     private static instance: Original;
 
-    public config = require('../../../resources/cfg/config.json');
-    public crypto = Crypto;
-    public logger = Logger;
     public db = {};
 
     static getInstance() {
@@ -18,13 +16,13 @@ class Original {
     }
 
     constructor() {
-        for (let i in this.config.db) {
-            switch (this.config.db[i].type) {
+        for (let i in Config.db) {
+            switch (Config.db[i].type) {
                 case 'mysql':
-                    this.db[i] = new MysqlDb(this.config.db[i].data);
+                    this.db[i] = new MysqlDb(Config.db[i].data);
                     break;
                 case 'redis':
-                    this.db[i] = new RedisDb(this.config.db[i].data);
+                    this.db[i] = new RedisDb(Config.db[i].data);
                     break;
             }
         }
@@ -85,14 +83,14 @@ class Original {
 
     async token(ctx: ParameterizedContext, next: Next) {
         let url = ctx.request.url.split('?')[0];
-        if (url === "/" || this.config.noToken.indexOf(url) > -1 || url.indexOf('/public') > -1) {
+        if (url === "/" || Config.noToken.indexOf(url) > -1 || url.indexOf('/public') > -1) {
             await next();
             return;
         }
         let token = ctx.request.headers['authorization'];
         if (token) {
             try {
-                let payload = this.crypto.decodeAse(token);
+                let payload = Crypto.decodeAse(token);
                 let {id, time} = JSON.parse(payload);
                 let find = await this._get('user_info', id);
                 if (find) {
@@ -100,7 +98,7 @@ class Original {
                     if (data <= time) {
                         delete find.pwd;
                         ctx.userInfo = {...find};
-                        ctx.set('Authorization', this.crypto.token(find.id));
+                        ctx.set('Authorization', Crypto.token(find.id));
                         await next();
                     } else ctx.body = this.error('token已过期');
                 } else ctx.body = this.error('不存在此token');

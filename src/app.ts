@@ -1,65 +1,61 @@
 import * as http from 'http';
-import {readdirSync} from 'fs';
 import {join} from 'path';
 import * as Koa from 'koa';
 import * as Static from 'koa-static';
-import * as Router from 'koa-router';
 import * as BodyParser from 'koa-bodyparser';
 import * as Cors from 'koa2-cors';
 import * as SocketIo from 'socket.io';
-
 import _ from './utils/lib/original';
+import Logger from './utils/lib/logger';
 import Socket from './utils/lib/socket';
 import Timer from './utils/lib/timer';
+import Router from './router';
 
-const app = new Koa();
-const router = new Router();
+const Config = require('../resources/cfg/config.json');
+const koa = new Koa();
 
-//onerror
-app.on('error', err => _.logger.error(err));
+class App {
+    constructor() {
+    }
 
-//origin
-app.use(Cors({
-    origin: (ctx: Koa.ParameterizedContext) => {
-        let i = _.config.domainWhiteList.indexOf(ctx.header.origin);//域名白名单
-        if (i === -1 || ctx.path === '/favicon.ico') ctx.throw(400, '无效访问');
-        return _.config.domainWhiteList[i] || null;
-    },
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
-    exposeHeaders: ['Content-Type', 'Authorization'] //设置获取其他自定义字段
-}));
+    async init() {
+        //onerror
+        koa.on('error', err => Logger.error(err));
+        //init
+        koa.use(async (ctx, next) => {
+            if (ctx.request.path === '/favicon.ico') return;
+            await next();
+            if (ctx.request.path === '/') ctx.body = _.success('Copyright (c) 2020 youliso');
+            Logger.access(`${ctx.originalUrl} ${ctx.header['x-real-ip']} ${ctx.header['user-agent']}`);
+        });
+        //origin
+        koa.use(Cors({
+            origin: (ctx: Koa.ParameterizedContext) => {
+                let i = Config.domainWhiteList.indexOf(ctx.header.origin);//域名白名单
+                return Config.domainWhiteList[i];
+            },
+            allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+            allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
+            exposeHeaders: ['Content-Type', 'Authorization'] //设置获取其他自定义字段
+        }));
+        //bodyParser
+        koa.use(BodyParser());
+        //token
+        koa.use(_.token);
+        //static
+        koa.use(Static(join(__dirname, '../resources/static')));
+        koa.use(await Router.http())
+        const server = http.createServer(koa.callback());
+        //socket模块初始化
+        new Socket().init(SocketIo(server), Router.socket());
+        //定时器模块开启
+        Timer.start().catch(e => Logger.error(e));
+        //绑定端口
+        server.listen(Config.port, () => {
+            console.log(`[success] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
+            console.log(`[port] http://127.0.0.1:${Config.port}`);
+        });
+    }
+}
 
-//bodyParser
-app.use(BodyParser());
-
-//token
-app.use(_.token);
-
-//static
-app.use(Static(join(__dirname, '../resources/static')));
-
-//router_http
-readdirSync(__dirname + '/router_http').forEach(async (element) => {
-    let module = await import(__dirname + '/router_http/' + element);
-    router.use('/' + element.split('.')[0], module.default.routes(), module.default.allowedMethods());
-});
-app.use(router.routes());
-
-//router_socket
-let router_socket = {};
-readdirSync(__dirname + '/router_socket').forEach(async (element) => {
-    let module = await import(__dirname + '/router_socket/' + element);
-    router_socket[element.split('.')[0]] = module.default;
-});
-
-const server = http.createServer(app.callback());
-//socket模块初始化
-new Socket().init(SocketIo(server), router_socket);
-//定时器模块开启
-Timer.start().catch(e => _.logger.error(e));
-//绑定端口
-server.listen(_.config.port, () => {
-    console.log(`[success] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
-    console.log(`[port] http://127.0.0.1:${_.config.port}`);
-});
+new App().init().catch(e => Logger.error(e));

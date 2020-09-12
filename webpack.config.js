@@ -1,5 +1,4 @@
 const webpack = require("webpack");
-
 const main = require('./webpack.main.config');
 
 webpack([

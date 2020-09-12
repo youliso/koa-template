@@ -1,6 +1,7 @@
 import * as SocketIO from "socket.io";
 import _ from './original';
 import Logger from "./logger";
+import Crypto from './crypto';
 
 export interface SocketClient extends SocketIO.Socket {
     userInfo?: unknown
@@ -23,7 +24,7 @@ export default class Socket {
     //获取用户信息
     async getUserIfo(Authorization: string) {
         try {
-            let payload = _.crypto.decodeAse(Authorization);
+            let payload = Crypto.decodeAse(Authorization);
             let {id} = JSON.parse(payload);
             let userInfo = await _._get('account', id);
             delete userInfo.pwd;
@@ -39,7 +40,7 @@ export default class Socket {
         setInterval(async () => {
             for (let i in this.clients) {
                 let item = this.clients[i];
-                if (item) item.send({code: 11, data: _.crypto.token(Number(i))});
+                if (item) item.send({code: 11, data: Crypto.token(Number(i))});
             }
         }, 1000 * 60 * 90);
     }

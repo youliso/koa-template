@@ -1,7 +1,7 @@
 import {createClient, RedisClient} from 'redis';
 
-export default class redisDb {
-    dbClient: RedisClient = null;
+export default class RedisDb {
+    dbClient: RedisClient;
 
     constructor(db: object) {
         this.dbClient = createClient(db);
@@ -80,5 +80,4 @@ export default class redisDb {
             })
         })
     }
-
 }

@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "scripts": {
     "update": "npm update",
-    "dev": "cross-env NODE_ENV=development node resources/script/webpack.config.js",
-    "prod": "cross-env NODE_ENV=production node resources/script/webpack.config.js",
-    "start": "ts-node src/app.ts"
+    "dev": "cross-env NODE_ENV=development node ./webpack.config.js",
+    "prod": "cross-env NODE_ENV=production node ./webpack.config.js",
+    "dev start": "ts-node src/app.ts",
+    "prod start": "node dist/app.js"
   },
   "devDependencies": {
+    "externals-dependencies": "^1.0.4",
     "@types/cheerio": "^0.22.21",
     "@types/koa": "^2.11.4",
     "@types/koa-bodyparser": "^4.3.0",
