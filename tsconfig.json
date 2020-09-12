@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "suppressImplicitAnyIndexErrors": true,
+    "noImplicitAny": true,
+    "sourceMap": false,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"]
+    },
+    "target": "ES2019",
+    "allowJs": true
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

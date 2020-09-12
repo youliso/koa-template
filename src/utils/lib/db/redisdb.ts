@@ -1,23 +1,11 @@
-'use strict';
-const redis = require('redis');
+import {createClient, RedisClient} from 'redis';
 
-class redisDb {
+export default class redisDb {
+    dbClient: RedisClient = null;
 
-    static getInstance() {
-        if (!redisDb.instance) redisDb.instance = new redisDb();
-        return redisDb.instance;
-    }
-
-    constructor() {
-        this.dbClient = '';
-    }
-
-    connect(db, logger) {  /*连接数据库*/
-        if (!this.dbClient) {
-            this.logger = logger;
-            this.dbClient = redis.createClient(db);
-            this.dbClient.on('error', (err) => this.logger.error(err));
-        }
+    constructor(db: object) {
+        this.dbClient = createClient(db);
+        this.dbClient.on('error', err => console.log(err));
     }
 
     /**
@@ -26,7 +14,7 @@ class redisDb {
      * @param value 值
      * @param expire 过期时间（单位：秒，可为空，为空则不过期）
      */
-    set(dbNum, key, value, expire) {
+    set(dbNum: number, key: string, value: string, expire: number) {
         return new Promise((resolve, reject) => {
             this.dbClient.select(dbNum, (err) => {
                 if (err) {
@@ -40,7 +28,7 @@ class redisDb {
                         return;
                     }
                     if (!isNaN(expire) && expire > 0) {
-                        this.dbClient.expire(key, parseInt(expire));
+                        this.dbClient.expire(key, expire);
                     }
                     resolve(res);
                 })
@@ -53,7 +41,7 @@ class redisDb {
      * @param dbNum 库号
      * @param key 键
      */
-    get(dbNum, key) {
+    get(dbNum: number, key: string) {
         return new Promise((resolve, reject) => {
             this.dbClient.select(dbNum, (err) => {
                 if (err) {
@@ -75,7 +63,7 @@ class redisDb {
      * @param dbNum 库号
      * @param key 键
      */
-    del(dbNum, key) {
+    del(dbNum: number, key: string) {
         return new Promise((resolve, reject) => {
             this.dbClient.select(dbNum, (err) => {
                 if (err) {
@@ -94,5 +82,3 @@ class redisDb {
     }
 
 }
-
-module.exports = redisDb.getInstance();

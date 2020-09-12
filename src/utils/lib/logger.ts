@@ -1,16 +1,16 @@
-'use strict';
-const {join} = require('path');
-const log4js = require('log4js');
+import {join} from 'path';
+import {configure, getLogger} from 'log4js';
 
-class logger {
+class Logger {
+    private static instance: Logger;
 
     static getInstance() {
-        if (!logger.instance) logger.instance = new logger();
-        return logger.instance;
+        if (!Logger.instance) Logger.instance = new Logger();
+        return Logger.instance;
     }
 
     constructor() {
-        log4js.configure({
+        configure({
             appenders: {
                 access: {
                     type: 'dateFile',
@@ -40,18 +40,17 @@ class logger {
         })
     }
 
-    access(e) {
-        log4js.getLogger('access').info(e);
+    access(e: unknown) {
+        getLogger('access').info(e);
     }
 
-    error(e) {
-        log4js.getLogger('error').error(e);
+    error(e: unknown) {
+        getLogger('error').error(e);
     }
 
-    info(e) {
-        log4js.getLogger('info').info(e);
+    info(e: unknown) {
+        getLogger('info').info(e);
     }
-
 }
 
-module.exports = logger.getInstance();
+export default Logger.getInstance();

@@ -1,23 +1,25 @@
-'use strict';
-const _ = require('./original');
+import * as SocketIO from "socket.io";
+import _ from './original';
+import Logger from "./logger";
 
-class socket {
+interface SocketClient extends SocketIO.Socket {
+    userInfo?: unknown
+}
 
-    static getInstance() {
-        if (!socket.instance) socket.instance = new socket();
-        return socket.instance;
-    }
+export default class Socket {
+    private io: SocketIO.Server;
+    private router: unknown;
+    private clients: { [key: string]: SocketClient } = {};
 
     constructor() {
-
     }
 
     //获取用户信息
-    async getUserIfo(Authorization) {
+    async getUserIfo(Authorization: string) {
         try {
             let payload = _.crypto.decodeAse(Authorization);
             let {id} = JSON.parse(payload);
-            let userInfo = await _._get('user_info', id);
+            let userInfo = await _._get('account', id);
             delete userInfo.pwd;
             return {...userInfo};
         } catch (e) {
@@ -25,23 +27,23 @@ class socket {
         }
     }
 
+
     //token刷新
     tokenRefresh() {
         setInterval(async () => {
             for (let i in this.clients) {
                 let item = this.clients[i];
-                if (item) item.socket.send({code: 11, data: _.crypto.token(item.id)});
+                if (item) item.send({code: 11, data: _.crypto.token(Number(i))});
             }
         }, 1000 * 60 * 90);
     }
 
     //初始化
-    init(io, router) {
+    init(io: SocketIO.Server, router: unknown) {
         this.io = io;
         this.router = router;
-        this.clients = {};
         this.tokenRefresh();
-        this.io.on('connection', async client => {
+        this.io.on('connection', async (client: SocketClient) => {
             if (_.isNull(client.request._query.Authorization)) {
                 client.send(_.error('Token为空'));
                 client.disconnect(true);
@@ -53,17 +55,21 @@ class socket {
                 return;
             }
             if (this.clients[userInfo.id]) {
-                client.send(_.error('重复登录'));
-                client.disconnect(true);
-                return;
+                this.clients[userInfo.id].send(_.error('在新设备登录!'));
+                this.clients[userInfo.id].disconnect(true);
             }
             delete userInfo.pwd;
-            userInfo.socket = client;
-            this.clients[userInfo.id] = userInfo;
+            client.userInfo = userInfo;
+            this.clients[userInfo.id] = client;
             client.on('message', async data => {
-                console.log(data);
                 if (!data) {
                     client.send(_.error('参数为空'));
+                    return;
+                }
+                try {
+                    data = JSON.parse(data);
+                } catch (e) {
+                    client.send(_.error('参数错误'));
                     return;
                 }
                 if (!data.path || !data.result) {
@@ -85,11 +91,9 @@ class socket {
             client.on('error', async err => {
                 console.log('error');
                 client.disconnect(true);
-                _.logger.error(err);
+                Logger.error(err);
             });
+            client.send({msg: 'init', code: 11, time: new Date().getTime()});
         });
     }
-
 }
-
-module.exports = socket.getInstance();

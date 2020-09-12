@@ -1,23 +1,25 @@
-'use strict';
-const http = require('http');
-const koa = require('koa');
-const static_ = require('koa-static');
-const Router = require('koa-router');
-const bodyParser = require('koa-bodyparser');
-const cors = require('koa2-cors');
-const {join} = require('path');
-const {readdirSync} = require('fs');
-const app = new koa();
+import * as http from 'http';
+import {readdirSync} from 'fs';
+import {join} from 'path';
+import * as Koa from 'koa';
+import * as Static from 'koa-static';
+import * as Router from 'koa-router';
+import * as BodyParser from 'koa-bodyparser';
+import * as Cors from 'koa2-cors';
+import * as SocketIo from 'socket.io';
+
+import _ from './utils/lib/original';
+import Socket from './utils/lib/socket';
+import Timer from './utils/lib/timer';
+const app = new Koa();
 const router = new Router();
-const token = require('./utils/lib/token');
-const _ = require('./utils/lib/original');
-const socketIo = require('./utils/lib/socket');
-const timer = require('./utils/lib/timer');
+
 //onerror
 app.on('error', err => _.logger.error(err));
+
 //origin
-app.use(cors({
-    origin: (ctx) => {
+app.use(Cors({
+    origin: (ctx: Koa.ParameterizedContext) => {
         let i = _.config.domainWhiteList.indexOf(ctx.header.origin);//域名白名单
         if (i === -1 || ctx.path === '/favicon.ico') ctx.throw(400, '无效访问');
         return _.config.domainWhiteList[i] || null;
@@ -26,35 +28,34 @@ app.use(cors({
     allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
     exposeHeaders: ['Content-Type', 'Authorization'] //设置获取其他自定义字段
 }));
-//init
-app.use(async (ctx, next) => {
-    await next();
-    if (ctx.request.path === '/') ctx.body = _.success('Copyright (c) 2020 youliso');
-    _.logger.access(`${ctx.originalUrl} ${ctx.header['x-real-ip']} ${ctx.header['user-agent']}`);
-});
+
 //bodyParser
-app.use(bodyParser());
+app.use(BodyParser());
+
 //token
-app.use(token.use);
+app.use(_.token);
+
 //static
-app.use(static_(join(__dirname, '../resources/static')));
+app.use(Static(join(__dirname, '../resources/static')));
+
 //router_http
 readdirSync(__dirname + '/router_http').forEach((element) => {
     let module = require(__dirname + '/router_http/' + element);
     router.use('/' + element.replace('.js', ''), module.routes(), module.allowedMethods());
 });
 app.use(router.routes());
+
 //router_socket
 let router_socket = {};
 readdirSync(__dirname + '/router_socket').forEach((element) => {
     router_socket[element.replace('.js', '')] = require(__dirname + '/router_socket/' + element);
 });
+
 const server = http.createServer(app.callback());
-const socket = require('socket.io')(server);
 //socket模块初始化
-socketIo.init(socket, router_socket);
+new Socket().init(SocketIo(server), router_socket);
 //定时器模块开启
-timer.start().catch(e => _.logger.error(e));
+Timer.start().catch(e => _.logger.error(e));
 //绑定端口
 server.listen(_.config.port, () => {
     console.log(`[success] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);

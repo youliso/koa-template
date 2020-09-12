@@ -5,11 +5,6 @@ const ObjectID = Mongodb.ObjectID;
 
 class Mongodb {
 
-    static getInstance() {
-        if (!Mongodb.instance) Mongodb.instance = new Mongodb();
-        return Mongodb.instance;
-    }
-
     constructor() {
         this.dbClient = '';
     }
@@ -160,4 +155,4 @@ class Mongodb {
 }
 
 
-module.exports = Mongodb.getInstance();
+module.exports = Mongodb;

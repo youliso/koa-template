@@ -1,24 +1,46 @@
 {
   "name": "Web_Template",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "update": "npm update",
-    "start": "node src/app.js"
+    "dev": "cross-env NODE_ENV=development node resources/script/webpack.config.js",
+    "prod": "cross-env NODE_ENV=production node resources/script/webpack.config.js",
+    "start": "ts-node src/app.ts"
   },
-  "dependencies": {
-    "koa": "^2.11.0",
+  "devDependencies": {
+    "@types/cheerio": "^0.22.21",
+    "@types/koa": "^2.11.4",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-router": "^7.4.1",
+    "@types/koa-static": "^4.0.1",
+    "@types/koa2-cors": "^2.0.1",
+    "@types/mongodb": "^3.5.27",
+    "@types/mysql2": "github:types/mysql2",
+    "@types/node-fetch": "^2.5.7",
+    "@types/node-schedule": "^1.3.0",
+    "@types/redis": "^2.8.27",
+    "@types/socket.io": "^2.1.11",
+    "cheerio": "^1.0.0-rc.3",
+    "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^6.1.0",
+    "cross-env": "^7.0.2",
+    "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
-    "koa-router": "^9.1.0",
+    "koa-router": "^9.4.0",
     "koa-sslify": "^4.0.3",
     "koa-static": "^5.0.0",
     "koa2-cors": "^2.0.6",
     "log4js": "^6.3.0",
     "mysql2": "^2.1.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "node-schedule": "^1.3.2",
-    "nodemailer": "^6.4.6",
+    "nodemailer": "^6.4.11",
+    "redis": "^3.0.2",
     "socket.io": "^2.3.0",
-    "cheerio": "^1.0.0-rc.3"
+    "ts-loader": "^8.0.3",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   }
 }
