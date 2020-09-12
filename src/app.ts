@@ -11,7 +11,7 @@ import Socket from './utils/lib/socket';
 import Timer from './utils/lib/timer';
 import Router from './router';
 
-const Config = require('../resources/cfg/config.json');
+const Config = require('./utils/cfg/config.json');
 const koa = new Koa();
 
 class App {

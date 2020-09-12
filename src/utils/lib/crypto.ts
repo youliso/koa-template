@@ -1,7 +1,7 @@
 'use strict';
 import {createHmac, scryptSync, randomBytes, createCipheriv, createDecipheriv} from 'crypto';
 
-const {crypto} = require('../../../resources/cfg/config.json');
+const {crypto} = require('../cfg/config.json');
 
 class Crypto {
     private static instance: Crypto;

@@ -3,7 +3,7 @@ import MysqlDb from './db/mysqldb';
 import RedisDb from './db/redisdb';
 import Crypto from './crypto';
 import Logger from './logger';
-const Config = require('../../../resources/cfg/config.json');
+const Config = require('../cfg/config.json');
 
 class Original {
     private static instance: Original;
