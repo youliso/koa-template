@@ -49,7 +49,7 @@ class App {
         //socket模块初始化
         new Socket().init(SocketIo(server), Router.socket());
         //定时器模块开启
-        Timer.start().catch(e => Logger.error(e));
+        await Timer.start();
         //绑定端口
         server.listen(Config.port, () => {
             console.log(`[success] ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
