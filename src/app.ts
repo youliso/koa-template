@@ -11,6 +11,7 @@ import * as SocketIo from 'socket.io';
 import _ from './utils/lib/original';
 import Socket from './utils/lib/socket';
 import Timer from './utils/lib/timer';
+
 const app = new Koa();
 const router = new Router();
 
@@ -39,16 +40,17 @@ app.use(_.token);
 app.use(Static(join(__dirname, '../resources/static')));
 
 //router_http
-readdirSync(__dirname + '/router_http').forEach((element) => {
-    let module = require(__dirname + '/router_http/' + element);
-    router.use('/' + element.replace('.js', ''), module.routes(), module.allowedMethods());
+readdirSync(__dirname + '/router_http').forEach(async (element) => {
+    let module = await import(__dirname + '/router_http/' + element);
+    router.use('/' + element.split('.')[0], module.default.routes(), module.default.allowedMethods());
 });
 app.use(router.routes());
 
 //router_socket
 let router_socket = {};
-readdirSync(__dirname + '/router_socket').forEach((element) => {
-    router_socket[element.replace('.js', '')] = require(__dirname + '/router_socket/' + element);
+readdirSync(__dirname + '/router_socket').forEach(async (element) => {
+    let module = await import(__dirname + '/router_socket/' + element);
+    router_socket[element.split('.')[0]] = module.default;
 });
 
 const server = http.createServer(app.callback());

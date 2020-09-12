@@ -2,8 +2,14 @@ import * as SocketIO from "socket.io";
 import _ from './original';
 import Logger from "./logger";
 
-interface SocketClient extends SocketIO.Socket {
+export interface SocketClient extends SocketIO.Socket {
     userInfo?: unknown
+}
+
+export interface SocketCtx {
+    clients: { [key: string]: SocketClient }, //客户端组
+    result: string,
+    data?: unknown
 }
 
 export default class Socket {
@@ -77,7 +83,7 @@ export default class Socket {
                     return;
                 }
                 let path = data.path.split('.');
-                let ctx = {
+                let ctx: SocketCtx = {
                     clients: this.clients, //客户端组
                     result: data.result,
                     data: data.data || null
