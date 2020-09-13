@@ -3,11 +3,6 @@ const mysql = require('mysql2');
 
 class MysqlDb {
 
-    static getInstance() {
-        if (!MysqlDb.instance) MysqlDb.instance = new MysqlDb();
-        return MysqlDb.instance;
-    }
-
     constructor() {
         this.dbClient = '';
     }
@@ -24,8 +19,14 @@ class MysqlDb {
         const promisePool = this.dbClient.promise();
         return new Promise((resolve, reject) => {
             promisePool.query(sql, params)
-                .then(res => resolve(res))
-                .catch(err => reject(err));
+                .then(res => {
+                    resolve(res);
+                    promisePool.end();
+                })
+                .catch(err => {
+                    reject(err);
+                    promisePool.end();
+                });
         });
     }
 
@@ -34,8 +35,14 @@ class MysqlDb {
         const promisePool = this.dbClient.promise();
         return new Promise((resolve, reject) => {
             promisePool.query(sql, params)
-                .then(res => resolve(res[0] || null))
-                .catch(err => reject(err));
+                .then(res => {
+                    resolve(res[0] || null);
+                    promisePool.end();
+                })
+                .catch(err => {
+                    reject(err);
+                    promisePool.end();
+                });
         });
     }
 
@@ -48,11 +55,16 @@ class MysqlDb {
                 .then(res => {
                     for (let i in res[0]) {
                         resolve(res[0][i] || null);
+                        promisePool.end();
                         return;
                     }
                     resolve(null);
+                    promisePool.end();
                 })
-                .catch(err => reject(err));
+                .catch(err => {
+                    reject(err);
+                    promisePool.end();
+                });
         });
     }
 
@@ -61,8 +73,14 @@ class MysqlDb {
         const promisePool = this.dbClient.promise();
         return new Promise((resolve, reject) => {
             promisePool.query(sql, params)
-                .then(res => resolve(res))
-                .catch(err => reject(err));
+                .then(res => {
+                    resolve(res);
+                    promisePool.end();
+                })
+                .catch(err => {
+                    reject(err);
+                    promisePool.end();
+                });
         });
     }
 
@@ -71,8 +89,14 @@ class MysqlDb {
         const promisePool = this.dbClient.promise();
         return new Promise(async (resolve, reject) => {
             promisePool.execute(sql, params)
-                .then(res => resolve(res))
-                .catch(err => reject(err));
+                .then(res => {
+                    resolve(res);
+                    promisePool.end();
+                })
+                .catch(err => {
+                    reject(err);
+                    promisePool.end();
+                });
         })
     }
 
@@ -81,4 +105,4 @@ class MysqlDb {
     }
 }
 
-module.exports = MysqlDb.getInstance();
+module.exports = MysqlDb;
