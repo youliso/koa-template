@@ -1,8 +1,5 @@
-import {Next, ParameterizedContext} from 'koa';
 import MysqlDb from './db/mysqldb';
 import RedisDb from './db/redisdb';
-import Crypto from './crypto';
-import Logger from './logger';
 const Config = require('../cfg/config.json');
 
 class Original {
@@ -80,35 +77,6 @@ class Original {
     async _del(table: string, id: number) {
         return await this.db['main'].query('delete from ' + table + ' where id = ?', [id]);
     }
-
-    async token(ctx: ParameterizedContext, next: Next) {
-        let url = ctx.request.url.split('?')[0];
-        if (url === "/" || Config.noToken.indexOf(url) > -1 || url.indexOf('/public') > -1) {
-            await next();
-            return;
-        }
-        let token = ctx.request.headers['authorization'];
-        if (token) {
-            try {
-                let payload = Crypto.decodeAse(token);
-                let {id, time} = JSON.parse(payload);
-                let find = await this._get('user_info', id);
-                if (find) {
-                    let data = new Date().getTime();
-                    if (data <= time) {
-                        delete find.pwd;
-                        ctx.userInfo = {...find};
-                        ctx.set('Authorization', Crypto.token(find.id));
-                        await next();
-                    } else ctx.body = this.error('token已过期');
-                } else ctx.body = this.error('不存在此token');
-            } catch (err) {
-                Logger.error(err);
-                ctx.body = this.error('token无效');
-            }
-        } else ctx.body = this.error('token无效');
-    }
-
 }
 
 export default Original.getInstance();

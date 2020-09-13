@@ -6,6 +6,7 @@ import * as BodyParser from 'koa-bodyparser';
 import * as Cors from 'koa2-cors';
 import * as SocketIo from 'socket.io';
 import _ from './utils/lib/original';
+import Token from './utils/lib/token';
 import Logger from './utils/lib/logger';
 import Socket from './utils/lib/socket';
 import Timer from './utils/lib/timer';
@@ -41,7 +42,7 @@ class App {
         //bodyParser
         koa.use(BodyParser());
         //token
-        koa.use(_.token);
+        koa.use(Token.use);
         //static
         koa.use(Static(join(__dirname, '../resources/static')));
         koa.use(await Router.http())

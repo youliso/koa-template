@@ -10,19 +10,25 @@ class Router {
 
     //router_http
     async http() {
-        let index = await import('./router_http/index');
+        let List = [];
+        List.push({path: '/index', value: await import('./router_http/index')});
 
-
-        this.routerHttp.use('/index', index.default.routes(), index.default.allowedMethods());
+        let req = await Promise.all(List);
+        req.forEach(e => {
+            this.routerHttp.use(e.path, e.value.default.routes(), e.value.default.allowedMethods());
+        })
         return this.routerHttp.routes();
     }
 
     //router_socket
     async socket() {
-        let index = await import('./router_socket/index');
+        let List = [];
+        List.push({path: 'index', value: await import('./router_socket/index')});
 
-
-        this.routerSocket['index'] = index.default;
+        let req = await Promise.all(List);
+        req.forEach(e => {
+            this.routerSocket[e.path] = e.value.default;
+        })
         return this.routerSocket;
     }
 
