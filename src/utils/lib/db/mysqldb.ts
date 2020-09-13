@@ -70,10 +70,7 @@ export default class Mysqldb {
                     return;
                 }
                 conn.promise().execute(sql, params)
-                    .then(res => {
-                        resolve(res);
-                        this.dbClient.releaseConnection(conn);
-                    })
+                    .then(res => resolve(res))
                     .catch(e => reject(e))
                     .then(() => this.dbClient.releaseConnection(conn));
             });
