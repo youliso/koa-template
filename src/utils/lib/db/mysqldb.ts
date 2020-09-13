@@ -14,11 +14,13 @@ export default class Mysqldb {
             promisePool.query(sql, params)
                 .then(res => {
                     resolve(res);
-                    promisePool.end();
+                    // @ts-ignore
+                    promisePool.release();
                 })
                 .catch(err => {
                     reject(err);
-                    promisePool.end();
+                    // @ts-ignore
+                    promisePool.release();
                 });
         });
     }
@@ -30,11 +32,13 @@ export default class Mysqldb {
             promisePool.query(sql, params)
                 .then(res => {
                     resolve(res[0] || null);
-                    promisePool.end();
+                    // @ts-ignore
+                    promisePool.release();
                 })
                 .catch(err => {
                     reject(err);
-                    promisePool.end();
+                    // @ts-ignore
+                    promisePool.release();
                 });
         });
     }
@@ -48,14 +52,18 @@ export default class Mysqldb {
                 .then(res => {
                     for (let i in res[0]) {
                         resolve(res[0][i] || null);
+                        // @ts-ignore
+                        promisePool.release();
                         return;
                     }
                     resolve(null);
-                    promisePool.end();
+                    // @ts-ignore
+                    promisePool.release();
                 })
                 .catch(err => {
                     reject(err);
-                    promisePool.end();
+                    // @ts-ignore
+                    promisePool.release();
                 });
         });
     }
@@ -66,12 +74,14 @@ export default class Mysqldb {
         return new Promise((resolve, reject) => {
             promisePool.query(sql, params)
                 .then(res => {
-                    resolve(res)
-                    promisePool.end();
+                    resolve(res);
+                    // @ts-ignore
+                    promisePool.release();
                 })
                 .catch(err => {
                     reject(err);
-                    promisePool.end();
+                    // @ts-ignore
+                    promisePool.release();
                 });
         });
     }
@@ -82,12 +92,14 @@ export default class Mysqldb {
         return new Promise(async (resolve, reject) => {
             promisePool.execute(sql, params)
                 .then(res => {
-                    resolve(res)
-                    promisePool.end();
+                    resolve(res);
+                    // @ts-ignore
+                    promisePool.release();
                 })
                 .catch(err => {
                     reject(err);
-                    promisePool.end();
+                    // @ts-ignore
+                    promisePool.release();
                 });
         })
     }
