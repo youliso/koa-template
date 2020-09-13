@@ -16,14 +16,9 @@ export default class Mysqldb {
                     return;
                 }
                 conn.promise().query(sql, params)
-                    .then(res => {
-                        resolve(res[0] || null);
-                        this.dbClient.releaseConnection(conn);
-                    })
-                    .catch(e => {
-                        reject(e);
-                        this.dbClient.releaseConnection(conn);
-                    });
+                    .then(res => resolve(res[0] || null))
+                    .catch(e => reject(e))
+                    .then(() => this.dbClient.releaseConnection(conn));
             });
         });
     }
@@ -40,16 +35,12 @@ export default class Mysqldb {
                     .then(res => {
                         for (let i in res[0]) {
                             resolve(res[0][i] || null);
-                            this.dbClient.releaseConnection(conn);
                             return;
                         }
                         resolve(null);
-                        this.dbClient.releaseConnection(conn);
                     })
-                    .catch(err => {
-                        reject(err);
-                        this.dbClient.releaseConnection(conn);
-                    });
+                    .catch(e => reject(e))
+                    .then(() => this.dbClient.releaseConnection(conn));
             });
         });
     }
@@ -63,14 +54,9 @@ export default class Mysqldb {
                     return;
                 }
                 conn.promise().query(sql, params)
-                    .then(res => {
-                        resolve(res);
-                        this.dbClient.releaseConnection(conn);
-                    })
-                    .catch(err => {
-                        reject(err);
-                        this.dbClient.releaseConnection(conn);
-                    });
+                    .then(res => resolve(res))
+                    .catch(e => reject(e))
+                    .then(() => this.dbClient.releaseConnection(conn));
             });
         });
     }
@@ -88,10 +74,8 @@ export default class Mysqldb {
                         resolve(res);
                         this.dbClient.releaseConnection(conn);
                     })
-                    .catch(err => {
-                        reject(err);
-                        this.dbClient.releaseConnection(conn);
-                    });
+                    .catch(e => reject(e))
+                    .then(() => this.dbClient.releaseConnection(conn));
             });
         });
     }
