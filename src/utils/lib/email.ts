@@ -4,34 +4,33 @@ import {Options as mailerOptions} from "nodemailer/lib/mailer";
 import _ from './tool';
 import Logger from './logger';
 
+const emailConfig = require('../cfg/email.json');
+
 /**
- * 发送邮件结构
- * email 收件人
+ * 邮件
  * */
+
+export interface emailOpt {
+    subject: string;
+    html: string;
+}
 
 class email {
     private title: string;
     private email: string;
     private code: string;
-    private transportOptions: smtpOptions
-    private sendMailOptions: mailerOptions
+    private transportOptions: smtpOptions = emailConfig;
+    sendMailOptions: mailerOptions
 
-    constructor() {
+    constructor(info: emailOpt) {
         this.code = Math.random().toString(16).slice(2, 6).toUpperCase();
-        // this.transportOptions = {
-        //     service: '163', // no need to set host or port etc. 更多邮箱支持 https://nodemailer.com/smtp/well-known/
-        //     auth: {
-        //         user: 'test@163.com',
-        //         pass: 'test'
-        //     }
-        // };
-
-        // this.sendMailOptions = {
-        //     from: `${this.title}<${this.conf.user}>`, // 发件人
-        //     to: this.email, // 收件人
-        //     cc: 'test@163.com',
-        //     subject: info.subject // 邮件主题
-        // };
+        this.sendMailOptions = {
+            from: `${this.title}<${this.transportOptions.auth.user}>`, // 发件人
+            to: this.email, // 收件人
+            cc: this.transportOptions.auth.user,
+            subject: info.subject, // 邮件主题
+            html: info.html
+        };
     }
 
 
