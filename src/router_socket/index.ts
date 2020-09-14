@@ -1,4 +1,4 @@
-import _ from '../utils/lib/original';
+import _ from '../utils/lib/tool';
 import {SocketClient, SocketCtx} from "../utils/lib/socket";
 
 const index = {};

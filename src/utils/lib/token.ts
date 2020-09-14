@@ -1,5 +1,5 @@
 import {Next, ParameterizedContext} from "koa";
-import _ from './original';
+import _ from './tool';
 import Crypto from "./crypto";
 import Logger from "./logger";
 

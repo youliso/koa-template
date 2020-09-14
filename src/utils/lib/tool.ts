@@ -2,14 +2,14 @@ import MysqlDb from './db/mysqldb';
 import RedisDb from './db/redisdb';
 const Config = require('../cfg/config.json');
 
-class Original {
-    private static instance: Original;
+class Tool {
+    private static instance: Tool;
 
     public db = {};
 
     static getInstance() {
-        if (!Original.instance) Original.instance = new Original();
-        return Original.instance;
+        if (!Tool.instance) Tool.instance = new Tool();
+        return Tool.instance;
     }
 
     constructor() {
@@ -79,4 +79,4 @@ class Original {
     }
 }
 
-export default Original.getInstance();
+export default Tool.getInstance();

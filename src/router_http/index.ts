@@ -1,5 +1,5 @@
 import * as Router from 'koa-router';
-import _ from '../utils/lib/original';
+import _ from '../utils/lib/tool';
 
 const index = new Router();
 

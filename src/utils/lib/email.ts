@@ -1,7 +1,7 @@
 import {createTransport} from 'nodemailer';
 import {Options as smtpOptions} from "nodemailer/lib/smtp-transport";
 import {Options as mailerOptions} from "nodemailer/lib/mailer";
-import _ from './original';
+import _ from './tool';
 import Logger from './logger';
 
 /**

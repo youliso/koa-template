@@ -1,7 +1,7 @@
 import {scheduleJob} from 'node-schedule';
 // import fetch from 'node-fetch';
 // import {} from 'cheerio';
-import _ from './original';
+import _ from './tool';
 import Logger from "./logger";
 
 class Timer {

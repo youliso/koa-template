@@ -5,7 +5,7 @@ import * as Static from 'koa-static';
 import * as BodyParser from 'koa-bodyparser';
 import * as Cors from 'koa2-cors';
 import * as SocketIo from 'socket.io';
-import _ from './utils/lib/original';
+import _ from './utils/lib/tool';
 import Token from './utils/lib/token';
 import Logger from './utils/lib/logger';
 import Socket from './utils/lib/socket';
