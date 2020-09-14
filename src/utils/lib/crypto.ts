@@ -1,7 +1,7 @@
 'use strict';
 import {createHmac, scryptSync, randomBytes, createCipheriv, createDecipheriv} from 'crypto';
 
-const {crypto} = require('../cfg/config.json');
+const cryptoConfig = require('../cfg/crypto.json');
 
 class Crypto {
     private static instance: Crypto;
@@ -20,7 +20,7 @@ class Crypto {
      * @param ks 加密密钥
      */
     encodeMd5(text: string, ks?: string) {
-        ks = ks || crypto.key;
+        ks = ks || cryptoConfig.key;
         let hmac = createHmac('md5', ks);
         return hmac.update(text.toString()).digest('hex');
     }
@@ -32,8 +32,8 @@ class Crypto {
      * @param ks 加密密钥
      */
     encodeAes(text: string, ks?: string) {
-        ks = ks || crypto.key;
-        const key = scryptSync(ks, crypto.salt, 24);
+        ks = ks || cryptoConfig.key;
+        const key = scryptSync(ks, cryptoConfig.salt, 24);
         const iv = Buffer.alloc(16, 0); // 初始化向量。
         const cipher = createCipheriv('aes-192-cbc', key, iv);
         let encrypted = cipher.update(text.toString(), 'utf8', 'hex');
@@ -46,8 +46,8 @@ class Crypto {
      * @param text  需要解密的内容
      */
     decodeAse(text: string, ks?: string) {
-        ks = ks || crypto.key;
-        const key = scryptSync(ks, crypto.salt, 24);
+        ks = ks || cryptoConfig.key;
+        const key = scryptSync(ks, cryptoConfig.salt, 24);
         const iv = Buffer.alloc(16, 0); // 初始化向量。
         const decipher = createDecipheriv('aes-192-cbc', key, iv);
         let decrypted = decipher.update(text.toString(), 'hex', 'utf8');

@@ -1,6 +1,7 @@
 import MysqlDb from './db/mysqldb';
 import RedisDb from './db/redisdb';
-const Config = require('../cfg/config.json');
+
+const dbConfig = require('../cfg/db.json');
 
 class Tool {
     private static instance: Tool;
@@ -13,13 +14,13 @@ class Tool {
     }
 
     constructor() {
-        for (let i in Config.db) {
-            switch (Config.db[i].type) {
+        for (let i in dbConfig) {
+            switch (dbConfig[i].type) {
                 case 'mysql':
-                    this.db[i] = new MysqlDb(Config.db[i].data);
+                    this.db[i] = new MysqlDb(dbConfig[i].data);
                     break;
                 case 'redis':
-                    this.db[i] = new RedisDb(Config.db[i].data);
+                    this.db[i] = new RedisDb(dbConfig[i].data);
                     break;
             }
         }

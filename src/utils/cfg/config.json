@@ -1,27 +1,11 @@
 {
+  "port": 3000,
   "domainWhiteList": [
     "http://localhost:3000"
   ],
-  "port": 3000,
-  "db": {
-    "main": {
-      "type": "mysql",
-      "data": {
-        "host": "192.168.50.1",
-        "user": "test",
-        "password": "123456",
-        "database": "test",
-        "charset": "utf8mb4"
-      }
-    }
-  },
   "noToken": [
     "/index/get",
     "/user/login",
     "/user/register"
-  ],
-  "crypto": {
-    "key": "key",
-    "salt": "salt"
-  }
+  ]
 }

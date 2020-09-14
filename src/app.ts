@@ -27,7 +27,7 @@ class App {
             if (ctx.request.path === '/favicon.ico') return;
             await next();
             if (ctx.request.path === '/') ctx.body = _.success('Copyright (c) 2020 youliso');
-            Logger.access(`${ctx.originalUrl} ${ctx.header['x-real-ip']} ${ctx.header['user-agent']}`);
+            Logger.access(`${ctx.originalUrl} ${ctx.header['x-real-ip']||'-'} ${ctx.header['user-agent']}`);
         });
         //origin
         koa.use(Cors({
