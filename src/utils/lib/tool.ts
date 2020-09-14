@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch, {RequestInit} from 'node-fetch';
 import MysqlDb from './db/mysqldb';
 import RedisDb from './db/redisdb';
 
@@ -8,7 +8,7 @@ export interface netOpt {
     headers?: { [key: string]: string };
     method?: string;
     Authorization?: string;
-    body?: string;
+    data?: { [key: string]: unknown };
     timeout?: number;
 }
 
@@ -90,19 +90,20 @@ class Tool {
     }
 
     net(url: string, param: netOpt) {
-        let headers = {
-            'Content-type': 'application/json;charset=utf-8',
-            'Authorization': param.Authorization || this.netAuthorization || ''
-        }
-        if (param.method === 'GET') url = url + this.convertObj(param.body);
-        if (param.headers) Object.assign(headers, param.headers);
+        let sendData: RequestInit = {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0',
+                'Content-type': 'application/json;charset=utf-8',
+                'Authorization': param.Authorization || this.netAuthorization || ''
+            },
+            timeout: param.timeout || 30000,
+            method: param.method || 'GET'
+        };
+        if (param.headers) Object.assign(sendData.headers, param.headers);
+        if (sendData.method === 'GET') url = url + '?' + this.convertObj(param.data);
+        else sendData.body = JSON.stringify(param.data);
         return new Promise((resolve, reject) => {
-            fetch(url, {
-                headers,
-                timeout: param.timeout || 30000,
-                method: param.method || "GET",
-                body: param.body || null
-            })
+            fetch(url, sendData)
                 .then(res => {
                     if (res.status >= 200 && res.status < 300) {
                         let Authorization = res.headers.get('Authorization');
