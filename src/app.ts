@@ -16,7 +16,8 @@ const Config = require('./utils/cfg/config.json');
 const koa = new Koa();
 
 class App {
-    constructor() {}
+    constructor() {
+    }
 
     async init() {
         //onerror
