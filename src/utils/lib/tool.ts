@@ -10,6 +10,7 @@ export interface netOpt {
     Authorization?: string;
     data?: { [key: string]: unknown };
     timeout?: number;
+    type?: string;
 }
 
 class Tool {
@@ -89,7 +90,9 @@ class Tool {
         return _result.join('&');
     }
 
-    net(url: string, param: netOpt) {
+    net(url: string, param?: netOpt) {
+        param = param || {};
+        param.type = param.type || 'text';
         let sendData: RequestInit = {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0',
@@ -112,14 +115,19 @@ class Tool {
                     }
                     throw new Error(res.statusText);
                 })
-                .then(res => res.text())
-                .then(data => {
-                    try {
-                        resolve(JSON.parse(data));
-                    } catch (e) {
-                        resolve(data);
+                .then(async (res) => {
+                    switch (param.type) {
+                        case 'text':
+                            return await res.text();
+                        case 'json':
+                            return await res.json();
+                        case 'buffer':
+                            return await res.arrayBuffer();
+                        case 'blob':
+                            return await res.blob();
                     }
                 })
+                .then(data => resolve(data))
                 .catch(err => reject(err));
         })
     }

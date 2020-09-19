@@ -53,8 +53,10 @@ class Timer {
 
     /**
      * 添加方法到定时器队列
+     * 如果添加的key已存在将无效
      * */
     async add(task: taskOpt) {
+        if (this.taskList[task.key]) return;
         let timeout = await task.func(true);
         if (typeof timeout === 'number') {
             this.Timeouts[task.key] = setInterval(async () => {
@@ -65,7 +67,6 @@ class Timer {
                 await task.func(false, this);
             });
         }
-        this.taskList[task.key] = task.func;
     }
 
     /**

@@ -6,7 +6,8 @@
     "dev": "cross-env NODE_ENV=development node ./webpack.config.js",
     "prod": "cross-env NODE_ENV=production node ./webpack.config.js",
     "dev start": "ts-node src/app.ts",
-    "prod start": "node dist/app.js"
+    "prod start": "node dist/app.js",
+    "test": "ts-node test/test.ts"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.21",
