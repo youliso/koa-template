@@ -6,7 +6,7 @@ export interface MongoDbOpt {
     name: string;
 }
 
-class Mongodb {
+export class MongoDb {
     private dbClient: Db;
 
     constructor(db: MongoDbOpt) {
@@ -146,6 +146,3 @@ class Mongodb {
     // }
 
 }
-
-
-module.exports = Mongodb;

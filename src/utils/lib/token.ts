@@ -31,9 +31,9 @@ class Token {
                 if (find) {
                     let data = new Date().getTime();
                     if (data <= time) {
-                        delete find.pwd;
-                        ctx.userInfo = {...find};
-                        ctx.set('Authorization', Crypto.token(find.id));
+                        delete find['pwd'];
+                        ctx.userInfo = {...<object>find};
+                        ctx.set('Authorization', Crypto.token(find['id']));
                         await next();
                     } else ctx.body = _.error('token已过期');
                 } else ctx.body = _.error('不存在此token');

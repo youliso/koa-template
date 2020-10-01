@@ -27,8 +27,8 @@ export default class Socket {
             let payload = Crypto.decodeAse(Authorization);
             let {id} = JSON.parse(payload);
             let userInfo = await _._get('account', id);
-            delete userInfo.pwd;
-            return {...userInfo};
+            delete userInfo['pwd'];
+            return {...<object>userInfo};
         } catch (e) {
             return null;
         }
@@ -61,13 +61,13 @@ export default class Socket {
                 client.disconnect(true);
                 return;
             }
-            if (this.clients[userInfo.id]) {
-                this.clients[userInfo.id].send(_.error('在新设备登录!'));
-                this.clients[userInfo.id].disconnect(true);
+            if (this.clients[userInfo['id']]) {
+                this.clients[userInfo['id']].send(_.error('在新设备登录!'));
+                this.clients[userInfo['id']].disconnect(true);
             }
-            delete userInfo.pwd;
+            delete userInfo['pwd'];
             client.userInfo = userInfo;
-            this.clients[userInfo.id] = client;
+            this.clients[userInfo['id']] = client;
             client.on('message', async data => {
                 if (!data) {
                     client.send(_.error('参数为空'));

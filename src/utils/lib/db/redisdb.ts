@@ -1,6 +1,6 @@
 import {createClient, RedisClient} from 'redis';
 
-export default class RedisDb {
+export class RedisDb {
     dbClient: RedisClient;
 
     constructor(db: object) {

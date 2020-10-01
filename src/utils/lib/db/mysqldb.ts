@@ -1,6 +1,6 @@
 import {createPool, Pool, escape} from 'mysql2';
 
-export default class Mysqldb {
+export class MysqlDb {
     dbClient: Pool;
 
     constructor(db: object) {
@@ -8,7 +8,7 @@ export default class Mysqldb {
     }
 
     //返回一个对象
-    first(sql: string, params: object) {
+    first(sql: string, params?: object) {
         return new Promise((resolve, reject) => {
             this.dbClient.getConnection(async (err, conn) => {
                 if (err) {
@@ -18,13 +18,13 @@ export default class Mysqldb {
                 conn.promise().query(sql, params)
                     .then(res => resolve(res[0] || null))
                     .catch(e => reject(e))
-                    .then(() =>conn.release());
+                    .then(() => conn.release());
             });
         });
     }
 
     //返回单个查询结果
-    single(sql: string, params: object) {
+    single(sql: string, params?: object) {
         return new Promise((resolve, reject) => {
             this.dbClient.getConnection(async (err, conn) => {
                 if (err) {
@@ -40,13 +40,13 @@ export default class Mysqldb {
                         resolve(null);
                     })
                     .catch(e => reject(e))
-                    .then(() =>conn.release());
+                    .then(() => conn.release());
             });
         });
     }
 
     //执行代码，返回执行结果
-    query(sql: string, params: object) {
+    query(sql: string, params?: object) {
         return new Promise((resolve, reject) => {
             this.dbClient.getConnection(async (err, conn) => {
                 if (err) {
@@ -56,13 +56,13 @@ export default class Mysqldb {
                 conn.promise().query(sql, params)
                     .then(res => resolve(res))
                     .catch(e => reject(e))
-                    .then(() =>conn.release());
+                    .then(() => conn.release());
             });
         });
     }
 
     //执行代码，返回执行结果
-    execute(sql: string, params: object) {
+    execute(sql: string, params?: object) {
         return new Promise((resolve, reject) => {
             this.dbClient.getConnection(async (err, conn) => {
                 if (err) {
@@ -72,7 +72,7 @@ export default class Mysqldb {
                 conn.promise().execute(sql, params)
                     .then(res => resolve(res))
                     .catch(e => reject(e))
-                    .then(() =>conn.release());
+                    .then(() => conn.release());
             });
         });
     }
