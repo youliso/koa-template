@@ -10,9 +10,9 @@ class Router {
 
     //router_http
     async http() {
-        let List = [];
-        List.push({path: '/index', value: await import('./router_http/index')});
-
+        let List = [//http 请求对应路由 (/)
+            {path: '/index', value: await import('./router_http/index')}
+        ];
         let req = await Promise.all(List);
         req.forEach(e => {
             this.routerHttp.use(e.path, e.value.default.routes(), e.value.default.allowedMethods());
@@ -22,9 +22,9 @@ class Router {
 
     //router_socket
     async socket() {
-        let List = [];
-        List.push({path: 'index', value: await import('./router_socket/index')});
-
+        let List = [//socket 对应路由 (.)
+            {path: 'index', value: await import('./router_socket/index')}
+        ];
         let req = await Promise.all(List);
         req.forEach(e => {
             this.routerSocket[e.path] = e.value.default;
