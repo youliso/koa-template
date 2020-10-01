@@ -18,7 +18,7 @@ export default class Mysqldb {
                 conn.promise().query(sql, params)
                     .then(res => resolve(res[0] || null))
                     .catch(e => reject(e))
-                    .then(() => this.dbClient.releaseConnection(conn));
+                    .then(() =>conn.release());
             });
         });
     }
@@ -40,7 +40,7 @@ export default class Mysqldb {
                         resolve(null);
                     })
                     .catch(e => reject(e))
-                    .then(() => this.dbClient.releaseConnection(conn));
+                    .then(() =>conn.release());
             });
         });
     }
@@ -56,7 +56,7 @@ export default class Mysqldb {
                 conn.promise().query(sql, params)
                     .then(res => resolve(res))
                     .catch(e => reject(e))
-                    .then(() => this.dbClient.releaseConnection(conn));
+                    .then(() =>conn.release());
             });
         });
     }
@@ -72,7 +72,7 @@ export default class Mysqldb {
                 conn.promise().execute(sql, params)
                     .then(res => resolve(res))
                     .catch(e => reject(e))
-                    .then(() => this.dbClient.releaseConnection(conn));
+                    .then(() =>conn.release());
             });
         });
     }
