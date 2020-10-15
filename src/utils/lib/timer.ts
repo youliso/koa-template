@@ -47,16 +47,18 @@ class Timer {
         this.Timeouts = {};
         this.scheduleJobs = {};
         for (let i in this.taskList) {
-            if (this.taskList[i]) await this.add({key: i, func: this.taskList[i]});
+            if (this.taskList[i]) await this.add({key: i, func: this.taskList[i]}, true);
         }
     }
 
     /**
      * 添加方法到定时器队列
      * 如果添加的key已存在将无效
+     * @param task
+     * @param is 首次启动时需传入 true
      * */
-    async add(task: taskOpt) {
-        if (this.taskList[task.key]) return;
+    async add(task: taskOpt, is?: boolean) {
+        if (!is && this.taskList[task.key]) return;
         let timeout = await task.func(true);
         if (typeof timeout === 'number') {
             this.Timeouts[task.key] = setInterval(async () => {
