@@ -48,6 +48,7 @@ class Token {
         } catch (err) {
             Logger.error(err);
             ctx.body = restful.error('服务器错误');
+            await next();
         }
     }
 
