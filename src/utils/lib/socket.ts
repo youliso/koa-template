@@ -2,7 +2,7 @@ import * as SocketIO from "socket.io";
 import Db from './db';
 import {isNull, restful} from './tool';
 import Logger from "./logger";
-import {decodeAse,tokenAes} from './crypto';
+import {tokenGet, tokenAdd} from './token';
 
 export interface SocketClient extends SocketIO.Socket {
     userInfo?: unknown
@@ -23,13 +23,10 @@ export default class Socket {
     }
 
     //获取用户信息
-    async getUserIfo(Authorization: string) {
+    async getUserIfo(token: string) {
         try {
-            let payload = decodeAse(Authorization);
-            let {id} = JSON.parse(payload);
-            let userInfo = await Db.get('account', id);
-            delete userInfo['pwd'];
-            return {...<object>userInfo};
+            let id = tokenGet(token);
+            return {...<object>await Db.get('account', Number(id))};
         } catch (e) {
             return null;
         }
@@ -41,9 +38,9 @@ export default class Socket {
         setInterval(async () => {
             for (let i in this.clients) {
                 let item = this.clients[i];
-                if (item) item.send({code: 11, data: tokenAes(Number(i))});
+                if (item) item.send({code: 11, data: await tokenAdd(Number(item["id"]))});
             }
-        }, 1000 * 60 * 90);
+        }, 1000 * 60 * 60);
     }
 
     //初始化

@@ -45,16 +45,6 @@ export function decodeAse(text: string, ks?: string) {
 }
 
 /**
- * token加密
- * */
-export function tokenAes(id: number) {
-    return this.encodeAes(JSON.stringify({
-        id,
-        time: new Date().getTime() + 1000 * 60 * 120
-    }));
-}
-
-/**
  * 随机密码
  * */
 export function randomSize(size: number) {
