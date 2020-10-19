@@ -1,4 +1,4 @@
-import _ from '../src/utils/lib/tool';
+import {net} from '../src/utils/lib/net';
 import {load} from 'cheerio';
 import {writeFileSync, statSync, mkdirSync} from 'fs';
 import {resolve} from 'path';
@@ -8,7 +8,7 @@ const data = require('./req/data.json');
     let list: { [key: string]: string }[] = [];
     for (let i = 1; i < 9; i++) {
         let url: string = `http://www.zgfxy.cn/xyzl/fyyh/List_${i}.html`;
-        let req = await _.net(url);
+        let req = await net(url);
         const $ = load(req as string);
         $('div.fypage ul li').each((i, v) => {
             let item = {
@@ -29,7 +29,7 @@ const data = require('./req/data.json');
         return buf;
     }
     for (let i of data) {
-        let req = await _.net(i.img, {type: 'buffer'});
+        let req = await net(i.img, {type: 'buffer'});
         try {
             statSync(resolve(__dirname + `/data/${i.name}`));
         } catch (e) {

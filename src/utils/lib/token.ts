@@ -1,6 +1,7 @@
 import {Next, ParameterizedContext} from "koa";
-import _ from './tool';
-import Crypto from "./crypto";
+import Db from './db';
+import {restful} from './tool';
+import {decodeAse, tokenAes} from "./crypto";
 import Logger from "./logger";
 
 const Config = require('../cfg/config.json');
@@ -25,23 +26,23 @@ class Token {
         let token = ctx.request.headers['authorization'];
         if (token) {
             try {
-                let payload = Crypto.decodeAse(token);
+                let payload = decodeAse(token);
                 let {id, time} = JSON.parse(payload);
-                let find = await _._get('user_info', id);
+                let find = await Db.get('user_info', id);
                 if (find) {
                     let data = new Date().getTime();
                     if (data <= time) {
                         delete find['pwd'];
                         ctx.userInfo = {...<object>find};
-                        ctx.set('Authorization', Crypto.token(find['id']));
+                        ctx.set('Authorization', tokenAes(find['id']));
                         await next();
-                    } else ctx.body = _.error('token已过期');
-                } else ctx.body = _.error('不存在此token');
+                    } else ctx.body = restful.error('token已过期');
+                } else ctx.body = restful.error('不存在此token');
             } catch (err) {
                 Logger.error(err);
-                ctx.body = _.error('服务器错误');
+                ctx.body = restful.error('服务器错误');
             }
-        } else ctx.body = _.error('无效请求');
+        } else ctx.body = restful.error('无效请求');
     }
 }
 

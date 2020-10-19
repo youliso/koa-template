@@ -5,7 +5,6 @@ import * as Static from 'koa-static';
 import * as BodyParser from 'koa-bodyparser';
 import * as Cors from 'koa2-cors';
 import * as SocketIo from 'socket.io';
-import _ from './utils/lib/tool';
 import Token from './utils/lib/token';
 import Logger from './utils/lib/logger';
 import Socket from './utils/lib/socket';
@@ -24,10 +23,10 @@ class App {
         koa.on('error', err => Logger.error(err));
         //init
         koa.use(async (ctx, next) => {
-            if (ctx.request.path === '/favicon.ico') return;
+            if (ctx.request.path === "/favicon.ico") return;
             await next();
-            if (ctx.request.path === '/') ctx.body = _.success('Copyright (c) 2020 youliso');
-            Logger.access(`${ctx.originalUrl} ${ctx.header['x-real-ip'] || '-'} ${ctx.header['user-agent']}`);
+            if (ctx.request.path === "/") ctx.body = "Copyright (c) 2020 youliso";
+            Logger.access(`${ctx.originalUrl} ${ctx.header["x-real-ip"] || "-"} ${ctx.header["user-agent"]}`);
         });
         //origin
         koa.use(Cors({

@@ -1,7 +1,7 @@
 import {createTransport} from 'nodemailer';
 import {Options as smtpOptions} from "nodemailer/lib/smtp-transport";
 import {Options as mailerOptions} from "nodemailer/lib/mailer";
-import _ from './tool';
+import {restful} from './tool';
 import Logger from './logger';
 
 const emailConfig = require('../cfg/email.json');
@@ -39,10 +39,10 @@ class email {
         try {
             let transporter = createTransport(this.transportOptions);
             let info = await transporter.sendMail(this.sendMailOptions);
-            if (info) return _.success('发送成功,十分钟有效期');
+            if (info) return restful.success('发送成功,十分钟有效期');
         } catch (err) {
             Logger.error(err);
-            return _.error('发送失败，请重新尝试');
+            return restful.error('发送失败，请重新尝试');
         }
     }
 

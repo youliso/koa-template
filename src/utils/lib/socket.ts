@@ -1,7 +1,8 @@
 import * as SocketIO from "socket.io";
-import _ from './tool';
+import Db from './db';
+import {isNull, restful} from './tool';
 import Logger from "./logger";
-import Crypto from './crypto';
+import {decodeAse,tokenAes} from './crypto';
 
 export interface SocketClient extends SocketIO.Socket {
     userInfo?: unknown
@@ -24,9 +25,9 @@ export default class Socket {
     //获取用户信息
     async getUserIfo(Authorization: string) {
         try {
-            let payload = Crypto.decodeAse(Authorization);
+            let payload = decodeAse(Authorization);
             let {id} = JSON.parse(payload);
-            let userInfo = await _._get('account', id);
+            let userInfo = await Db.get('account', id);
             delete userInfo['pwd'];
             return {...<object>userInfo};
         } catch (e) {
@@ -40,7 +41,7 @@ export default class Socket {
         setInterval(async () => {
             for (let i in this.clients) {
                 let item = this.clients[i];
-                if (item) item.send({code: 11, data: Crypto.token(Number(i))});
+                if (item) item.send({code: 11, data: tokenAes(Number(i))});
             }
         }, 1000 * 60 * 90);
     }
@@ -51,8 +52,8 @@ export default class Socket {
         this.router = router;
         this.tokenRefresh();
         this.io.on('connection', async (client: SocketClient) => {
-            if (_.isNull(client.request._query.Authorization)) {
-                client.send(_.error('Token为空'));
+            if (isNull(client.request._query.Authorization)) {
+                client.send(restful.error('Token为空'));
                 client.disconnect(true);
                 return;
             }
@@ -62,7 +63,7 @@ export default class Socket {
                 return;
             }
             if (this.clients[userInfo['id']]) {
-                this.clients[userInfo['id']].send(_.error('在新设备登录!'));
+                this.clients[userInfo['id']].send(restful.error('在新设备登录!'));
                 this.clients[userInfo['id']].disconnect(true);
             }
             delete userInfo['pwd'];
@@ -70,17 +71,17 @@ export default class Socket {
             this.clients[userInfo['id']] = client;
             client.on('message', async data => {
                 if (!data) {
-                    client.send(_.error('参数为空'));
+                    client.send(restful.error('参数为空'));
                     return;
                 }
                 try {
                     data = JSON.parse(data);
                 } catch (e) {
-                    client.send(_.error('参数错误'));
+                    client.send(restful.error('参数错误'));
                     return;
                 }
                 if (!data.path || !data.result) {
-                    client.send(_.error('参数错误'));
+                    client.send(restful.error('参数错误'));
                     return;
                 }
                 let path = data.path.split('.');

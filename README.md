@@ -8,15 +8,10 @@ npm install
 
 ## 运行调试
 ```shell
-npm run dev start
+npm run dev
 ```
 
 ## 打包配置
-- 可调式打包
 ```shell
-npm run dev
-```
-- 生产环境打包
-```shell
-npm run prod
+npm run build
 ```

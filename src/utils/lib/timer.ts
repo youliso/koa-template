@@ -1,7 +1,5 @@
 import {Job, scheduleJob} from 'node-schedule';
 // import {} from 'cheerio';
-import _ from './tool';
-import Logger from "./logger";
 
 export interface taskOpt {
     key: string;
