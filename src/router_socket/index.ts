@@ -5,10 +5,10 @@ const index = {};
 
 index['home'] = (client: SocketClient, ctx: SocketCtx) => {
     let data = {
-        result: ctx.result,
+        key: ctx.key,
         data: {test: 'test'}
     }
-    client.broadcast.send(restful.success("测试", data));
+    client.send(restful.success("测试", data));
 };
 
 export default index;

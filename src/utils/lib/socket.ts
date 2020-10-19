@@ -1,16 +1,15 @@
 import * as SocketIO from "socket.io";
-import Db from './db';
 import {isNull, restful} from './tool';
 import Logger from "./logger";
 import {tokenGet, tokenAdd} from './token';
 
 export interface SocketClient extends SocketIO.Socket {
-    userInfo?: unknown
+    userId?: number
 }
 
 export interface SocketCtx {
     clients: { [key: string]: SocketClient }, //客户端组
-    result: string,
+    key: string, //数据返回标识
     data?: unknown
 }
 
@@ -21,17 +20,6 @@ export default class Socket {
 
     constructor() {
     }
-
-    //获取用户信息
-    async getUserIfo(token: string) {
-        try {
-            let id = tokenGet(token);
-            return {...<object>await Db.get('account', Number(id))};
-        } catch (e) {
-            return null;
-        }
-    }
-
 
     //token刷新
     tokenRefresh() {
@@ -54,20 +42,19 @@ export default class Socket {
                 client.disconnect(true);
                 return;
             }
-            let userInfo = await this.getUserIfo(client.request._query.Authorization);
-            if (!userInfo) {
+            let userId = await tokenGet(client.request._query.Authorization) as string;
+            if (isNull(userId)) {
                 client.disconnect(true);
                 return;
             }
-            if (this.clients[userInfo['id']]) {
-                this.clients[userInfo['id']].send(restful.error('在新设备登录!'));
-                this.clients[userInfo['id']].disconnect(true);
+            if (this.clients[userId]) {
+                this.clients[userId].send(restful.error('在新设备登录!'));
+                this.clients[userId].disconnect(true);
             }
-            delete userInfo['pwd'];
-            client.userInfo = userInfo;
-            this.clients[userInfo['id']] = client;
+            client.userId = Number(userId);
+            this.clients[client.userId] = client;
             client.on('message', async data => {
-                if (!data) {
+                if (isNull(data)) {
                     client.send(restful.error('参数为空'));
                     return;
                 }
@@ -84,14 +71,14 @@ export default class Socket {
                 let path = data.path.split('.');
                 let ctx: SocketCtx = {
                     clients: this.clients, //客户端组
-                    result: data.result,
+                    key: data.key,
                     data: data.data || null
                 };
                 this.router[path[0]][path[1]](client, ctx);
             });
             client.on('disconnect', async () => {
                 console.log('close');
-                delete this.clients[client.id];
+                delete this.clients[client.userId];
             });
             client.on('error', async err => {
                 console.log('error');

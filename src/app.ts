@@ -46,8 +46,11 @@ class App {
         koa.use(Static(join(__dirname, '../resources/static')));
         koa.use(await Router.http())
         const server = http.createServer(koa.callback());
+        const io = SocketIo(server);
+        //设置白名单
+        io.origins(Config.domainWhiteList);
         //socket模块初始化
-        new Socket().init(SocketIo(server), Router.socket());
+        new Socket().init(io, Router.socket());
         //定时器模块开启
         await Timer.start();
         //绑定端口
