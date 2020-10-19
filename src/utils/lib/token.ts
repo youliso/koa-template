@@ -30,6 +30,12 @@ class Token {
                 await next();
                 return;
             }
+            let id = await this.get(token);
+            if (isNull(id)) {
+                ctx.body = restful.error('没有token，或已过期');
+                await next();
+                return;
+            }
             let outTime = await this.ttl(token);
             if (outTime <= 0) {
                 ctx.body = restful.error('没有token，或已过期');
@@ -37,12 +43,6 @@ class Token {
                 return;
             } else if (outTime <= 1800) {
                 ctx.set('Authorization', await this.add(token));
-            }
-            let id = await this.get(token);
-            if (isNull(id)) {
-                ctx.body = restful.error('没有token，或已过期');
-                await next();
-                return;
             }
             ctx.userInfo = {id: Number(id)};
         } catch (err) {
