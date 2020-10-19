@@ -1,13 +1,7 @@
 import {join} from 'path';
 import {configure, getLogger} from 'log4js';
 
-class Logger {
-    private static instance: Logger;
-
-    static getInstance() {
-        if (!Logger.instance) Logger.instance = new Logger();
-        return Logger.instance;
-    }
+export default class Logger {
 
     constructor() {
         configure({
@@ -40,17 +34,15 @@ class Logger {
         })
     }
 
-    access(e: unknown) {
+    static access(e: unknown) {
         getLogger('access').info(e);
     }
 
-    error(e: unknown) {
+    static error(e: unknown) {
         getLogger('error').error(e);
     }
 
-    info(e: unknown) {
+    static info(e: unknown) {
         getLogger('info').info(e);
     }
 }
-
-export default Logger.getInstance();
