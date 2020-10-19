@@ -80,4 +80,26 @@ export class RedisDb {
             })
         })
     }
+
+    /**
+     * @param dbNum 库号
+     * @param key 键
+     */
+    ttl(dbNum: number, key: string) {
+        return new Promise((resolve, reject) => {
+            this.dbClient.select(dbNum, (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                this.dbClient.ttl(key, (err, res) => {
+                    if (err) {
+                        reject(err);
+                        return
+                    }
+                    resolve(res);
+                })
+            })
+        })
+    }
 }

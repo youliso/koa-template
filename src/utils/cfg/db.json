@@ -8,5 +8,12 @@
       "database": "test",
       "charset": "utf8mb4"
     }
+  },
+  "sub": {
+    "type": "redis",
+    "data": {
+      "host": "127.0.0.1",
+      "port": 6379
+    }
   }
 }
