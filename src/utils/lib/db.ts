@@ -17,17 +17,18 @@ class Db {
 
     constructor() {
         for (let i in dbConfig) {
-            switch (dbConfig[i].type) {
-                case 'mysql':
-                    this.mysqlDb[i] = new MysqlDb(dbConfig[i].data);
-                    break;
-                case 'redis':
-                    this.redisDb[i] = new RedisDb(dbConfig[i].data);
-                    break;
-                case 'mongo':
-                    this.mongoDb[i] = new MongoDb(dbConfig[i].data);
-                    break;
-            }
+            if (dbConfig.hasOwnProperty(i))
+                switch (dbConfig[i].type) {
+                    case 'mysql':
+                        this.mysqlDb[i] = new MysqlDb(dbConfig[i].data);
+                        break;
+                    case 'redis':
+                        this.redisDb[i] = new RedisDb(dbConfig[i].data);
+                        break;
+                    case 'mongo':
+                        this.mongoDb[i] = new MongoDb(dbConfig[i].data);
+                        break;
+                }
         }
     }
 
@@ -47,7 +48,7 @@ class Db {
     async del(table: string, id: number) {
         return await this.mysqlDb['main'].query('delete from ' + table + ' where id = ?', [id]);
     }
-    
+
 }
 
 export default Db.getInstance();

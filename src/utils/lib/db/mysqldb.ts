@@ -33,11 +33,8 @@ export class MysqlDb {
                 }
                 conn.promise().query(sql, params)
                     .then(res => {
-                        for (let i in res[0]) {
-                            resolve(res[0][i] || null);
-                            return;
-                        }
-                        resolve(null);
+                        let i = Object.keys(res[0])[0];
+                        resolve(res[0][i] || null);
                     })
                     .catch(e => reject(e))
                     .then(() => conn.release());
