@@ -57,23 +57,21 @@ export async function tokenUse(ctx: ParameterizedContext, next: Next) {
         let token = ctx.request.headers['authorization'];
         if (isNull(token)) {
             ctx.body = restful.error('没有token');
-            await next();
             return;
         }
-        let outTime = await this.tokenTtl(token);
+        let outTime = await tokenTtl(token);
         if (outTime <= 0) {
             ctx.body = restful.error('没有token，或已过期');
-            await next();
             return;
         } else if (outTime <= 1800) {
-            ctx.set('Authorization', await this.tokenAdd(token));
+            ctx.set('Authorization', await tokenAdd(token));
         } else {
             ctx.set('Authorization', token);
         }
-        ctx.userInfo = {id: Number(await this.tokenGet(token))};
+        ctx.userInfo= {id: Number(await tokenGet(token))};
+        await next();
     } catch (err) {
         Logger.error(err);
         ctx.body = restful.error('服务器错误');
-        await next();
     }
 }
