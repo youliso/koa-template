@@ -1,7 +1,7 @@
 import {Next, ParameterizedContext} from "koa";
 import Db from './db';
 import {isNull, restful} from './tool';
-import {encodeMd5} from "./crypto";
+import {encodeMd5, randomSize} from "./crypto";
 import Logger from "./logger";
 
 const Config = require('../cfg/config.json');
@@ -12,7 +12,7 @@ const Config = require('../cfg/config.json');
  */
 export async function tokenAdd(id: number) {
     try {
-        let token = encodeMd5(id.toString());
+        let token = encodeMd5(id.toString() + randomSize(10));
         await Db.redisDb["sub"].set(0, token, id.toString(), 7200);
         return token;
     } catch (e) {
@@ -47,6 +47,20 @@ export async function tokenTtl(token: string) {
     }
 }
 
+/**
+ * 更新token剩余时间
+ * @param token
+ * @param seconds
+ */
+export async function tokenExpire(token: string, seconds: number) {
+    try {
+        return await Db.redisDb["sub"].expire(0, token, seconds) as number;
+    } catch (e) {
+        Logger.error(e);
+        return -2;
+    }
+}
+
 export async function tokenUse(ctx: ParameterizedContext, next: Next) {
     let url = ctx.request.url.split('?')[0];
     if (url === "/" || Config.noToken.indexOf(url) > -1 || url.indexOf('/public') > -1) {
@@ -68,7 +82,7 @@ export async function tokenUse(ctx: ParameterizedContext, next: Next) {
         } else {
             ctx.set('Authorization', token);
         }
-        ctx.userInfo= {id: Number(await tokenGet(token))};
+        ctx.userInfo = {id: Number(await tokenGet(token))};
         await next();
     } catch (err) {
         Logger.error(err);

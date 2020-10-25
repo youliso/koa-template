@@ -9,6 +9,11 @@ interface restfulOpt {
     data?: unknown
 }
 
+interface socketMsgOpt {
+    key: "socket-error" | "socket-success" | "socket-init";
+    value?: unknown;
+}
+
 export class restful {
     constructor() {
     }
@@ -35,6 +40,10 @@ export class restful {
         if (time) e.time = time;
         if (msg) e.msg = msg;
         return e;
+    }
+
+    static socketMsg(data: socketMsgOpt) {
+        return data;
     }
 
 }

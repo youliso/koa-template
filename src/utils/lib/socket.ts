@@ -1,7 +1,7 @@
 import * as SocketIO from "socket.io";
 import {isNull, restful} from './tool';
 import Logger from "./logger";
-import {tokenGet, tokenAdd} from './token';
+import {tokenGet, tokenExpire} from './token';
 
 export interface SocketClient extends SocketIO.Socket {
     userId?: number
@@ -25,8 +25,7 @@ export default class Socket {
     tokenRefresh() {
         setInterval(async () => {
             for (let i in this.clients) {
-                let item = this.clients[i];
-                if (item) item.send({code: 11, data: await tokenAdd(Number(item["id"]))});
+                await tokenExpire(this.clients[i].request._query.Authorization, 7200);
             }
         }, 1000 * 60 * 60);
     }
@@ -38,7 +37,7 @@ export default class Socket {
         this.tokenRefresh();
         this.io.on('connection', async (client: SocketClient) => {
             if (isNull(client.request._query.Authorization)) {
-                client.send(restful.error('Token为空'));
+                client.send(restful.socketMsg({key: "socket-error", value: "Token为空"}));
                 client.disconnect(true);
                 return;
             }
@@ -48,24 +47,24 @@ export default class Socket {
                 return;
             }
             if (this.clients[userId]) {
-                this.clients[userId].send(restful.error('在新设备登录!'));
+                this.clients[userId].send(restful.socketMsg({key: "socket-error", value: "在新设备登录!"}));
                 this.clients[userId].disconnect(true);
             }
             client.userId = Number(userId);
             this.clients[client.userId] = client;
             client.on('message', async data => {
                 if (isNull(data)) {
-                    client.send(restful.error('参数为空'));
+                    client.send(restful.socketMsg({key: "socket-error", value: "参数为空!"}));
                     return;
                 }
                 try {
                     data = JSON.parse(data);
                 } catch (e) {
-                    client.send(restful.error('参数错误'));
+                    client.send(restful.socketMsg({key: "socket-error", value: "参数错误!"}));
                     return;
                 }
                 if (!data.path || !data.result) {
-                    client.send(restful.error('参数错误'));
+                    client.send(restful.socketMsg({key: "socket-error", value: "参数错误!"}));
                     return;
                 }
                 let path = data.path.split('.');
@@ -85,7 +84,7 @@ export default class Socket {
                 client.disconnect(true);
                 Logger.error(err);
             });
-            client.send({msg: 'init', code: 11, time: new Date().getTime()});
+            client.send(restful.socketMsg({key: "socket-init", value: "ok"}));
         });
     }
 }

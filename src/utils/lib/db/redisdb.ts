@@ -102,4 +102,28 @@ export class RedisDb {
             })
         })
     }
+
+    /**
+     * @param dbNum 库号
+     * @param key 键
+     * @param seconds 时间(秒)
+     */
+    expire(dbNum: number, key: string, seconds: number) {
+        return new Promise((resolve, reject) => {
+            this.dbClient.select(dbNum, (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                this.dbClient.expire(key, seconds, (err, res) => {
+                    if (err) {
+                        reject(err);
+                        return
+                    }
+                    resolve(res);
+                })
+            })
+        })
+    }
+
 }
