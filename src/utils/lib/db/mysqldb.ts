@@ -1,77 +1,67 @@
-import {createPool, Pool, escape} from 'mysql2';
+import * as mysql from 'mysql2/promise';
+import Logger from "../logger";
 
 export class MysqlDb {
-    dbClient: Pool;
+    dbClient: mysql.Pool;
 
     constructor(db: object) {
-        this.dbClient = createPool(db);
+        this.dbClient = mysql.createPool(db);
     }
 
     //返回一个对象
-    first(sql: string, params?: object) {
-        return new Promise((resolve, reject) => {
-            this.dbClient.getConnection(async (err, conn) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                conn.promise().query(sql, params)
-                    .then(res => resolve(res[0] || null))
-                    .catch(e => reject(e))
-                    .then(() => conn.release());
-            });
-        });
+    async first(sql: string, params?: object) {
+        try {
+            const connection = await this.dbClient.getConnection();
+            await connection.ping();
+            const rows = await connection.query(sql, params);
+            connection.release();
+            return rows[0];
+        } catch (e) {
+            Logger.error(e.toString());
+            return null;
+        }
     }
 
     //返回单个查询结果
-    single(sql: string, params?: object) {
-        return new Promise((resolve, reject) => {
-            this.dbClient.getConnection(async (err, conn) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                conn.promise().query(sql, params)
-                    .then(res => {
-                        let i = Object.keys(res[0])[0];
-                        resolve(res[0][i] || null);
-                    })
-                    .catch(e => reject(e))
-                    .then(() => conn.release());
-            });
-        });
+    async single(sql: string, params?: object) {
+        try {
+            const connection = await this.dbClient.getConnection();
+            await connection.ping();
+            const rows = await connection.query(sql, params);
+            connection.release();
+            return rows[0][Object.keys(rows[0])[0]];
+        } catch (e) {
+            Logger.error(e.toString());
+            return null;
+        }
     }
 
     //执行代码，返回执行结果
-    query(sql: string, params?: object) {
-        return new Promise((resolve, reject) => {
-            this.dbClient.getConnection(async (err, conn) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                conn.promise().query(sql, params)
-                    .then(res => resolve(res))
-                    .catch(e => reject(e))
-                    .then(() => conn.release());
-            });
-        });
+    async query(sql: string, params?: object) {
+        try {
+            const connection = await this.dbClient.getConnection();
+            await connection.ping();
+            const rows = await connection.query(sql, params);
+            connection.release();
+            return rows;
+        } catch (e) {
+            Logger.error(e.toString());
+            return null;
+        }
     }
 
     //执行代码，返回执行结果
-    execute(sql: string, params?: object) {
-        return new Promise((resolve, reject) => {
-            this.dbClient.getConnection(async (err, conn) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                conn.promise().execute(sql, params)
-                    .then(res => resolve(res))
-                    .catch(e => reject(e))
-                    .then(() => conn.release());
-            });
-        });
+    async execute(sql: string, params?: object) {
+        try {
+            const connection = await this.dbClient.getConnection();
+            await connection.ping();
+            const rows = await connection.execute(sql, params);
+            connection.release();
+            return rows;
+        } catch (e) {
+            Logger.error(e.toString());
+            return null;
+        }
     }
 
     /**
@@ -79,7 +69,7 @@ export class MysqlDb {
      * @param {*} c
      **/
     escape(c: unknown) {
-        return escape(c);
+        return mysql.escape(c);
     }
 
 }
