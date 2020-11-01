@@ -1,11 +1,11 @@
-import * as mysql from 'mysql2/promise';
+import {Pool, createPool, escape} from 'mysql2/promise';
 import Logger from "../logger";
 
 export class MysqlDb {
-    dbClient: mysql.Pool;
+    dbClient: Pool;
 
     constructor(db: object) {
-        this.dbClient = mysql.createPool(db);
+        this.dbClient = createPool(db);
     }
 
     //返回一个对象
@@ -69,7 +69,7 @@ export class MysqlDb {
      * @param {*} c
      **/
     escape(c: unknown) {
-        return mysql.escape(c);
+        return escape(c);
     }
 
 }
