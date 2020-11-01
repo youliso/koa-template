@@ -12,14 +12,9 @@ module.exports = {
     externals: _externals(),
     context: __dirname,
     node: {
-        console: true,
         global: true,
-        process: true,
-        Buffer: true,
         __filename: true,
         __dirname: true,
-        setImmediate: true,
-        path: true
     },
     entry: {
         "app": [
@@ -29,6 +24,9 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: path.resolve('dist')
+    },
+    optimization: {
+        minimize: true
     },
     module: {
         rules: [
