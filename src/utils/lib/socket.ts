@@ -25,7 +25,7 @@ export default class Socket {
     tokenRefresh() {
         setInterval(async () => {
             for (let i in this.clients) {
-                await tokenExpire(this.clients[i].request._query.Authorization, 7200);
+                if (this.clients[i]) await tokenExpire(this.clients[i].request._query.Authorization, 7200);
             }
         }, 1000 * 60 * 60);
     }
