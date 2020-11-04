@@ -7,7 +7,7 @@ import * as Cors from 'koa2-cors';
 import * as SocketIo from 'socket.io';
 import {tokenUse} from './utils/lib/token';
 import Logger from './utils/lib/logger';
-import Socket from './utils/lib/socket';
+import {Sockets} from './utils/lib/socket';
 import Timer from './utils/lib/timer';
 import Router from './router';
 
@@ -50,7 +50,7 @@ class App {
         //设置白名单
         io.origins(Config.domainWhiteList);
         //socket模块初始化
-        new Socket().init(io, Router.socket());
+        Sockets.init(io, Router.socket());
         //定时器模块开启
         await Timer.start();
         //绑定端口

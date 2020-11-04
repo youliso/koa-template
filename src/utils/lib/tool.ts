@@ -10,8 +10,15 @@ interface restfulOpt {
 }
 
 interface socketMsgOpt {
-    key: "socket-error" | "socket-success" | "socket-init";
+    key: SocketMsgType;
     value?: unknown;
+}
+
+export enum SocketMsgType {
+    SOCKET_ERROR ,
+    SOCKET_SUCCESS,
+    SOCKET_INIT,
+    SOCKET_CLOSE
 }
 
 export class restful {
