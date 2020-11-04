@@ -8,7 +8,11 @@ index['home'] = (client: SocketClient, ctx: SocketCtx) => {
         key: ctx.key,
         data: {test: 'test'}
     }
-    client.send(restful.socketMsg({key: SocketMsgType.SOCKET_SUCCESS, value: data}));
+    client.send(restful.socketMsg({
+        type: SocketMsgType.SOCKET_SUCCESS,
+        key: "socket-home",
+        value: data
+    }));
 };
 
 export default index;

@@ -43,7 +43,11 @@ class Socket {
         this.tokenRefresh();
         this.io.on('connection', async (client: SocketClient) => {
             if (isNull(client.request._query.Authorization)) {
-                client.send(restful.socketMsg({key: SocketMsgType.SOCKET_ERROR, value: "Token为空!(10秒后程序将退出!)"}));
+                client.send(restful.socketMsg({
+                    type: SocketMsgType.SOCKET_ERROR,
+                    key: null,
+                    value: "Token为空!(10秒后程序将退出!)"
+                }));
                 client.disconnect(true);
                 return;
             }
@@ -53,24 +57,39 @@ class Socket {
                 return;
             }
             if (this.clients[userId]) {
-                this.clients[userId].send(restful.socketMsg({key: SocketMsgType.SOCKET_ERROR, value: "在新设备登录!(10秒后程序将退出!)"}));
+                this.clients[userId].send(restful.socketMsg({
+                    type: SocketMsgType.SOCKET_ERROR,
+                    key: null,
+                    value: "在新设备登录!(10秒后程序将退出!)"
+                }));
                 this.clients[userId].disconnect(true);
             }
             client.userId = Number(userId);
             this.clients[client.userId] = client;
             client.on('message', async data => {
                 if (isNull(data)) {
-                    client.send(restful.socketMsg({key: SocketMsgType.SOCKET_ERROR, value: "参数为空!(10秒后程序将退出!)"}));
+                    client.send(restful.socketMsg({
+                        type: SocketMsgType.SOCKET_ERROR,
+                        key: null,
+                        value: "参数为空!(10秒后程序将退出!)"
+                    }));
                     return;
                 }
                 try {
                     data = JSON.parse(data);
                 } catch (e) {
-                    client.send(restful.socketMsg({key: SocketMsgType.SOCKET_ERROR, value: "参数错误!(10秒后程序将退出!)"}));
+                    client.send(restful.socketMsg({
+                        type: SocketMsgType.SOCKET_ERROR,
+                        key: null,
+                        value: "参数错误!(10秒后程序将退出!)"}));
                     return;
                 }
                 if (!data.path || !data.result) {
-                    client.send(restful.socketMsg({key: SocketMsgType.SOCKET_ERROR, value: "参数错误!(10秒后程序将退出!)"}));
+                    client.send(restful.socketMsg({
+                        type: SocketMsgType.SOCKET_ERROR,
+                        key: null,
+                        value: "参数错误!(10秒后程序将退出!)"
+                    }));
                     return;
                 }
                 let path = data.path.split('.');
@@ -91,7 +110,11 @@ class Socket {
                 Logger.error(err);
             });
             Logger.info(`[socket-init] ${client.userId} ${client.request._query.Authorization}`);
-            client.send(restful.socketMsg({key: SocketMsgType.SOCKET_INIT, value: "ok"}));
+            client.send(restful.socketMsg({
+                type: SocketMsgType.SOCKET_INIT,
+                key: null,
+                value: "ok"
+            }));
         });
     }
 }
