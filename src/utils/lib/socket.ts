@@ -1,5 +1,5 @@
 import * as SocketIO from "socket.io";
-import {isNull, restful, SocketMsgType} from './tool';
+import {isNull, restful, SOCKET_MSG_TYPE} from './tool';
 import Logger from "./logger";
 import {tokenGet, tokenExpire} from './token';
 
@@ -44,7 +44,7 @@ class Socket {
         this.io.on('connection', async (client: SocketClient) => {
             if (isNull(client.request._query.Authorization)) {
                 client.send(restful.socketMsg({
-                    type: SocketMsgType.SOCKET_ERROR,
+                    type: SOCKET_MSG_TYPE.ERROR,
                     key: null,
                     value: "Token为空!(10秒后程序将退出!)"
                 }));
@@ -57,19 +57,20 @@ class Socket {
                 return;
             }
             if (this.clients[userId]) {
-                this.clients[userId].send(restful.socketMsg({
-                    type: SocketMsgType.SOCKET_ERROR,
+                client.send(restful.socketMsg({
+                    type: SOCKET_MSG_TYPE.ERROR,
                     key: null,
-                    value: "在新设备登录!(10秒后程序将退出!)"
+                    value: "账号已登录!(10秒后程序将退出!)"
                 }));
-                this.clients[userId].disconnect(true);
+                client.disconnect(true);
+                return;
             }
             client.userId = Number(userId);
             this.clients[client.userId] = client;
             client.on('message', async data => {
                 if (isNull(data)) {
                     client.send(restful.socketMsg({
-                        type: SocketMsgType.SOCKET_ERROR,
+                        type: SOCKET_MSG_TYPE.ERROR,
                         key: null,
                         value: "参数为空!(10秒后程序将退出!)"
                     }));
@@ -79,14 +80,14 @@ class Socket {
                     data = JSON.parse(data);
                 } catch (e) {
                     client.send(restful.socketMsg({
-                        type: SocketMsgType.SOCKET_ERROR,
+                        type: SOCKET_MSG_TYPE.ERROR,
                         key: null,
                         value: "参数错误!(10秒后程序将退出!)"}));
                     return;
                 }
                 if (!data.path || !data.result) {
                     client.send(restful.socketMsg({
-                        type: SocketMsgType.SOCKET_ERROR,
+                        type: SOCKET_MSG_TYPE.ERROR,
                         key: null,
                         value: "参数错误!(10秒后程序将退出!)"
                     }));
@@ -111,7 +112,7 @@ class Socket {
             });
             Logger.info(`[socket-init] ${client.userId} ${client.request._query.Authorization}`);
             client.send(restful.socketMsg({
-                type: SocketMsgType.SOCKET_INIT,
+                type: SOCKET_MSG_TYPE.INIT,
                 key: null,
                 value: "ok"
             }));

@@ -1,4 +1,4 @@
-import {restful, SocketMsgType} from '../utils/lib/tool';
+import {restful, SOCKET_MSG_TYPE} from '../utils/lib/tool';
 import {SocketClient, SocketCtx} from "../utils/lib/socket";
 
 const index = {};
@@ -9,7 +9,7 @@ index['home'] = (client: SocketClient, ctx: SocketCtx) => {
         data: {test: 'test'}
     }
     client.send(restful.socketMsg({
-        type: SocketMsgType.SOCKET_SUCCESS,
+        type: SOCKET_MSG_TYPE.SUCCESS,
         key: "socket-home",
         value: data
     }));
