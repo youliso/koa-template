@@ -6,7 +6,14 @@ export interface netOpt {
     Authorization?: string;
     data?: { [key: string]: unknown };
     timeout?: number;
-    type?: "text" | "json" | "buffer" | "blob";
+    type?: NET_RESPONSE_TYPE; //返回数据类型
+}
+
+export enum NET_RESPONSE_TYPE {
+    TEXT,
+    JSON,
+    BUFFER,
+    BLOB
 }
 
 export function convertObj(data: unknown) {
@@ -53,13 +60,13 @@ export function net(url: string, param?: netOpt) {
             })
             .then(async (res) => {
                 switch (param.type) {
-                    case 'text':
+                    case NET_RESPONSE_TYPE.TEXT:
                         return await res.text();
-                    case 'json':
+                    case NET_RESPONSE_TYPE.JSON:
                         return await res.json();
-                    case 'buffer':
+                    case NET_RESPONSE_TYPE.BUFFER:
                         return await res.arrayBuffer();
-                    case 'blob':
+                    case NET_RESPONSE_TYPE.BLOB:
                         return await res.blob();
                 }
             })
