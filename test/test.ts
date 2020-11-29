@@ -1,6 +1,6 @@
-import {net} from '../src/utils/lib/net';
+import {net, NET_RESPONSE_TYPE} from '../src/utils/lib/net';
 import {load} from 'cheerio';
-import {writeFileSync, statSync, mkdirSync} from 'fs';
+import {mkdirSync, statSync, writeFileSync} from 'fs';
 import {resolve} from 'path';
 
 const data = require('./req/data.json');
@@ -19,7 +19,7 @@ const data = require('./req/data.json');
             list.push(item);
         });
     }
-    writeFileSync(resolve(__dirname+'/req/data.json'),JSON.stringify(list));
+    writeFileSync(resolve(__dirname + '/req/data.json'), JSON.stringify(list));
     const toBuffer = (ab: ArrayBuffer) => {
         let buf = Buffer.from(ab);
         let view = new Uint8Array(ab);
@@ -29,7 +29,7 @@ const data = require('./req/data.json');
         return buf;
     }
     for (let i of data) {
-        let req = await net(i.img, {type: 'buffer'});
+        let req = await net(i.img, {type: NET_RESPONSE_TYPE.BUFFER});
         try {
             statSync(resolve(__dirname + `/data/${i.name}`));
         } catch (e) {

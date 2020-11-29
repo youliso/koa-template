@@ -1,6 +1,6 @@
 import fetch, {RequestInit} from "node-fetch";
 
-export interface netOpt {
+export interface NetOpt {
     headers?: { [key: string]: string };
     method?: string;
     Authorization?: string;
@@ -33,11 +33,18 @@ export function convertObj(data: unknown) {
     return _result.join('&');
 }
 
-export function net(url: string, param?: netOpt) {
+/**
+ * 错误信息包装
+ */
+export function errorReturn(msg: string): { [key: string]: unknown } {
+    return {code: -1, msg};
+}
+
+export function net(url: string, param: NetOpt = {}) {
     param = param || {};
-    param.type = param.type || 'text';
+    param.type = param.type || NET_RESPONSE_TYPE.TEXT;
     let sendData: RequestInit = {
-        headers: {
+        headers: param.headers || {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0',
             'Content-type': 'application/json;charset=utf-8',
             'Authorization': param.Authorization || this.netAuthorization || ''
@@ -48,29 +55,26 @@ export function net(url: string, param?: netOpt) {
     if (param.headers) Object.assign(sendData.headers, param.headers);
     if (sendData.method === 'GET') url = url + '?' + convertObj(param.data);
     else sendData.body = JSON.stringify(param.data);
-    return new Promise((resolve, reject) => {
-        fetch(url, sendData)
-            .then(res => {
-                if (res.status >= 200 && res.status < 300) {
-                    let Authorization = res.headers.get('Authorization');
-                    if (Authorization) this.netAuthorization = Authorization;
-                    return res;
-                }
-                throw new Error(res.statusText);
-            })
-            .then(async (res) => {
-                switch (param.type) {
-                    case NET_RESPONSE_TYPE.TEXT:
-                        return await res.text();
-                    case NET_RESPONSE_TYPE.JSON:
-                        return await res.json();
-                    case NET_RESPONSE_TYPE.BUFFER:
-                        return await res.arrayBuffer();
-                    case NET_RESPONSE_TYPE.BLOB:
-                        return await res.blob();
-                }
-            })
-            .then(data => resolve(data))
-            .catch(err => reject(err));
-    })
+    return fetch(url, sendData)
+        .then(res => {
+            if (res.status >= 200 && res.status < 300) {
+                let Authorization = res.headers.get('Authorization');
+                if (Authorization) this.netAuthorization = Authorization;
+                return res;
+            }
+            throw new Error(res.statusText);
+        })
+        .then(async (res) => {
+            switch (param.type) {
+                case NET_RESPONSE_TYPE.TEXT:
+                    return await res.text();
+                case NET_RESPONSE_TYPE.JSON:
+                    return await res.json();
+                case NET_RESPONSE_TYPE.BUFFER:
+                    return await res.arrayBuffer();
+                case NET_RESPONSE_TYPE.BLOB:
+                    return await res.blob();
+            }
+        })
+        .catch(err => errorReturn(err.message));
 }
