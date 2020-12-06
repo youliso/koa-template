@@ -13,8 +13,7 @@ class Router {
         let List = [//http 请求对应路由 (/)
             {path: '/index', value: await import('./router_http/index')}
         ];
-        let req = await Promise.all(List);
-        req.forEach(e => {
+        List.forEach(e => {
             this.routerHttp.use(e.path, e.value.default.routes(), e.value.default.allowedMethods());
         })
         return this.routerHttp.routes();
@@ -25,8 +24,7 @@ class Router {
         let List = [//socket 对应路由 (.)
             {path: 'index', value: await import('./router_socket/index')}
         ];
-        let req = await Promise.all(List);
-        req.forEach(e => {
+        List.forEach(e => {
             this.routerSocket[e.path] = e.value.default;
         })
         return this.routerSocket;
