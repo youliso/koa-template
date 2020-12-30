@@ -1,4 +1,3 @@
-'use strict';
 import {createHmac, scryptSync, randomBytes, createCipheriv, createDecipheriv} from 'crypto';
 
 const cryptoConfig = require('../cfg/crypto.json');

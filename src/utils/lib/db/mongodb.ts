@@ -1,4 +1,3 @@
-'use strict';
 import {Db, MongoClient, ObjectID, ObjectId} from "mongodb";
 
 export interface MongoDbOpt {

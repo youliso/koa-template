@@ -22,7 +22,7 @@ class App {
         //onerror
         koa.on('error', err => Logger.error(err));
         //init
-        koa.use(async (ctx,next) => {
+        koa.use(async (ctx, next) => {
             if (ctx.request.path === "/favicon.ico") return;
             await next();
             if (ctx.request.path === "/") ctx.body = "Copyright (c) 2020 youliso";
@@ -50,7 +50,7 @@ class App {
         //设置白名单
         io.origins(Config.domainWhiteList);
         //socket模块初始化
-        Sockets.init(io, Router.socket());
+        Sockets.init(io, await Router.socket());
         //定时器模块开启
         await Timer.start();
         //绑定端口
