@@ -2,7 +2,7 @@ import {MysqlDb} from "./db/mysqldb";
 import {RedisDb} from "./db/redisdb";
 import {MongoDb} from "./db/mongodb";
 
-const dbConfig = require('../cfg/db.json');
+const dbConfig = require('../../config/db.json');
 
 class Db {
     private static instance: Db;

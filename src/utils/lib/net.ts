@@ -37,7 +37,7 @@ export function convertObj(data: unknown) {
  * 错误信息包装
  */
 export function errorReturn(msg: string): { [key: string]: unknown } {
-    return {code: -1, msg};
+    return {code: 400, msg};
 }
 
 export function net(url: string, param: NetOpt = {}) {

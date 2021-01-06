@@ -1,9 +1,9 @@
-import * as SocketIO from "socket.io";
+import {Server, Socket as Io} from "socket.io";
 import {isNull, restful, SOCKET_MSG_TYPE} from './tool';
 import Logger from "./logger";
 import {tokenGet, tokenExpire} from './token';
 
-export interface SocketClient extends SocketIO.Socket {
+export interface SocketClient extends Io {
     userId?: number
 }
 
@@ -15,7 +15,7 @@ export interface SocketCtx {
 
 class Socket {
     private static instance: Socket;
-    private io: SocketIO.Server;
+    private io: Server;
     private router: unknown;
     public clients: { [key: string]: SocketClient } = {};
 
@@ -31,18 +31,18 @@ class Socket {
     tokenRefresh() {
         setInterval(async () => {
             for (let i in this.clients) {
-                if (this.clients[i]) await tokenExpire(this.clients[i].request._query.Authorization, 7200);
+                if (this.clients[i]) await tokenExpire(this.clients[i].handshake.query["authorization"], 7200);
             }
         }, 1000 * 60 * 60);
     }
 
     //初始化
-    init(io: SocketIO.Server, router: unknown) {
+    init(io: Server, router: unknown) {
         this.io = io;
         this.router = router;
         this.tokenRefresh();
-        this.io.on('connection', async (client: SocketClient) => {
-            if (isNull(client.request._query.Authorization)) {
+        this.io.sockets.on('connection', async (client: SocketClient) => {
+            if (isNull(client.handshake.query["authorization"])) {
                 client.send(restful.socketMsg({
                     type: SOCKET_MSG_TYPE.ERROR,
                     key: null,
@@ -51,7 +51,7 @@ class Socket {
                 client.disconnect(true);
                 return;
             }
-            let userId = await tokenGet(client.request._query.Authorization) as string;
+            let userId = await tokenGet(client.handshake.query["authorization"]) as string;
             if (isNull(userId)) {
                 client.disconnect(true);
                 return;
@@ -82,7 +82,8 @@ class Socket {
                     client.send(restful.socketMsg({
                         type: SOCKET_MSG_TYPE.ERROR,
                         key: null,
-                        value: "参数错误!(10秒后程序将退出!)"}));
+                        value: "参数错误!(10秒后程序将退出!)"
+                    }));
                     return;
                 }
                 if (!data.path || !data.result) {
@@ -110,7 +111,7 @@ class Socket {
                 client.disconnect(true);
                 Logger.error(err);
             });
-            Logger.info(`[socket-init] ${client.userId} ${client.request._query.Authorization}`);
+            Logger.info(`[socket-init] ${client.userId} ${client.handshake.query["authorization"]}`);
             client.send(restful.socketMsg({
                 type: SOCKET_MSG_TYPE.INIT,
                 key: null,

@@ -4,7 +4,7 @@ import {Options as mailerOptions} from "nodemailer/lib/mailer";
 import {restful} from './tool';
 import Logger from './logger';
 
-const emailConfig = require('../cfg/email.json');
+const emailConfig = require('../../config/email.json');
 
 /**
  * 邮件

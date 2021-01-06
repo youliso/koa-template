@@ -4,14 +4,14 @@ import * as Koa from 'koa';
 import * as Static from 'koa-static';
 import * as BodyParser from 'koa-bodyparser';
 import * as Cors from 'koa2-cors';
-import * as SocketIo from 'socket.io';
+import {Server as socketServer} from "socket.io";
 import {tokenUse} from './utils/lib/token';
 import Logger from './utils/lib/logger';
 import {Sockets} from './utils/lib/socket';
 import Timer from './utils/lib/timer';
 import Router from './router';
 
-const Config = require('./utils/cfg/config.json');
+const Config = require('./config/config.json');
 const koa = new Koa();
 
 class App {
@@ -28,10 +28,12 @@ class App {
             if (ctx.request.path === "/") ctx.body = "Copyright (c) 2020 youliso";
             Logger.access(`${ctx.originalUrl} ${ctx.header["x-real-ip"] || "-"} ${ctx.header["user-agent"]}`);
         });
+        let origin = null;
         //origin
         koa.use(Cors({
             origin: (ctx: Koa.ParameterizedContext) => {
                 let i = Config.domainWhiteList.indexOf(ctx.header.origin);//域名白名单
+                origin = Config.domainWhiteList[i];
                 return Config.domainWhiteList[i];
             },
             allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -46,9 +48,19 @@ class App {
         koa.use(Static(join(__dirname, '../resources/static')));
         koa.use(await Router.http())
         const server = http.createServer(koa.callback());
-        const io = SocketIo(server);
-        //设置白名单
-        io.origins(Config.domainWhiteList);
+        const io = new socketServer(server, {
+            cors: {
+                origin,
+                allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+                allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
+                exposeHeaders: ['Content-Type', 'Authorization'] //设置获取其他自定义字段
+            } as any,
+            path: Config.socketPath,
+            serveClient: false,
+            pingInterval: 10000,
+            pingTimeout: 5000,
+            cookie: false
+        });
         //socket模块初始化
         Sockets.init(io, await Router.socket());
         //定时器模块开启

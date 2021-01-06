@@ -4,7 +4,7 @@ import {isNull, restful} from './tool';
 import {encodeMd5, randomSize} from "./crypto";
 import Logger from "./logger";
 
-const Config = require('../cfg/config.json');
+const Config = require('../../config/config.json');
 
 /**
  * 通过用户id添加token

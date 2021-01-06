@@ -1,11 +1,15 @@
 import {createClient, RedisClient} from 'redis';
+import Logger from "../logger";
 
 export class RedisDb {
     dbClient: RedisClient;
 
     constructor(db: object) {
         this.dbClient = createClient(db);
-        this.dbClient.on('error', err => console.log(err));
+        this.dbClient.on('error', err => {
+            Logger.error(err);
+            this.dbClient.end(true);
+        });
     }
 
     /**
