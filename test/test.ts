@@ -1,4 +1,4 @@
-import {net, NET_RESPONSE_TYPE} from '../src/utils/lib/net';
+import {net, NET_RESPONSE_TYPE} from '../src/lib/net';
 import {load} from 'cheerio';
 import {mkdirSync, statSync, writeFileSync} from 'fs';
 import {resolve} from 'path';

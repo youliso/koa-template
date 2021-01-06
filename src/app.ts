@@ -5,10 +5,10 @@ import * as Static from 'koa-static';
 import * as BodyParser from 'koa-bodyparser';
 import * as Cors from 'koa2-cors';
 import {Server as socketServer} from "socket.io";
-import {tokenUse} from './utils/lib/token';
-import Logger from './utils/lib/logger';
-import {Sockets} from './utils/lib/socket';
-import Timer from './utils/lib/timer';
+import {tokenUse} from './lib/token';
+import Logger from './lib/logger';
+import {Sockets} from './lib/socket';
+import Timer from './lib/timer';
 import Router from './router';
 
 const Config = require('./config/config.json');
