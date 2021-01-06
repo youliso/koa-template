@@ -4,6 +4,23 @@
   "domainWhiteList": [
     "http://localhost:3000"
   ],
+  "cors": {
+    "allowMethods": [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "OPTIONS"
+    ],
+    "allowHeaders": [
+      "Content-Type",
+      "Authorization"
+    ],
+    "exposeHeaders": [
+      "Content-Type",
+      "Authorization"
+    ]
+  },
   "noToken": [
     "/index/get",
     "/user/login",

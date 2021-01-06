@@ -28,17 +28,15 @@ class App {
             if (ctx.request.path === "/") ctx.body = "Copyright (c) 2020 youliso";
             Logger.access(`${ctx.originalUrl} ${ctx.header["x-real-ip"] || "-"} ${ctx.header["user-agent"]}`);
         });
-        let origin = null;
         //origin
+        let origin = null;
         koa.use(Cors({
             origin: (ctx: Koa.ParameterizedContext) => {
                 let i = Config.domainWhiteList.indexOf(ctx.header.origin);//域名白名单
                 origin = Config.domainWhiteList[i];
                 return Config.domainWhiteList[i];
             },
-            allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-            allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
-            exposeHeaders: ['Content-Type', 'Authorization'] //设置获取其他自定义字段
+            ...Config.cors
         }));
         //bodyParser
         koa.use(BodyParser());
@@ -51,9 +49,7 @@ class App {
         const io = new socketServer(server, {
             cors: {
                 origin,
-                allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-                allowHeaders: ['Content-Type', 'Authorization'], //设置服务器支持的所有头信息字段
-                exposeHeaders: ['Content-Type', 'Authorization'] //设置获取其他自定义字段
+                ...Config.cors
             } as any,
             path: Config.socketPath,
             serveClient: false,
