@@ -31,7 +31,7 @@ class Socket {
     tokenRefresh() {
         setInterval(async () => {
             for (let i in this.clients) {
-                if (this.clients[i]) await tokenExpire(this.clients[i].handshake.query["authorization"], 7200);
+                if (this.clients[i]) await tokenExpire(this.clients[i].handshake.auth["authorization"], 7200);
             }
         }, 1000 * 60 * 60);
     }
@@ -42,7 +42,7 @@ class Socket {
         this.router = router;
         this.tokenRefresh();
         this.io.sockets.on('connection', async (client: SocketClient) => {
-            if (isNull(client.handshake.query["authorization"])) {
+            if (isNull(client.handshake.auth["authorization"])) {
                 client.send(restful.socketMsg({
                     type: SOCKET_MSG_TYPE.ERROR,
                     key: null,
@@ -51,7 +51,7 @@ class Socket {
                 client.disconnect(true);
                 return;
             }
-            let userId = await tokenGet(client.handshake.query["authorization"]) as string;
+            let userId = await tokenGet(client.handshake.auth["authorization"]) as string;
             if (isNull(userId)) {
                 client.disconnect(true);
                 return;
@@ -111,7 +111,7 @@ class Socket {
                 client.disconnect(true);
                 Logger.error(err);
             });
-            Logger.info(`[socket-init] ${client.userId} ${client.handshake.query["authorization"]}`);
+            Logger.info(`[socket-init] ${client.userId} ${client.handshake.auth["authorization"]}`);
             client.send(restful.socketMsg({
                 type: SOCKET_MSG_TYPE.INIT,
                 key: null,
