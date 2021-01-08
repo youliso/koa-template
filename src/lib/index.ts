@@ -28,7 +28,7 @@ export class restful {
 
     static success(msg?: string, data?: unknown, time?: number) {
         let e: restfulOpt = {
-            code: 0,
+            code: 200,
             msg: "success",
             time: new Date().getTime(),
             data
@@ -40,7 +40,7 @@ export class restful {
 
     static error(msg?: string, data?: unknown, time?: number) {
         let e: restfulOpt = {
-            code: -1,
+            code: 400,
             msg: "error",
             time: new Date().getTime(),
             data
