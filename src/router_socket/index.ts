@@ -1,5 +1,5 @@
 import {restful, SOCKET_MSG_TYPE} from '../lib';
-import {SocketClient, SocketCtx} from "../lib/socket";
+import {SocketClient, SocketCtx} from "../lib/socket_server";
 
 const index = {};
 

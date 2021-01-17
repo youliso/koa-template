@@ -24,7 +24,7 @@ class Timer {
         //     try {
         //         console.log('test1');
         //     } catch (e) {
-        //         Logger.error(e);
+        //         Log.error(e);
         //     }
         // };
         // this.taskList['test2'] = async (is, that) => {
@@ -32,7 +32,7 @@ class Timer {
         //     try {
         //         console.log('test2');
         //     } catch (e) {
-        //         Logger.error(e);
+        //         Log.error(e);
         //     }
         // };
     }

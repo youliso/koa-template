@@ -2,7 +2,7 @@ import {Next, ParameterizedContext} from "koa";
 import Db from './db';
 import {isNull, restful} from './';
 import {encodeMd5, randomSize} from "./crypto";
-import Logger from "./logger";
+import Log from "./log";
 
 const Config = require('../config/config.json');
 
@@ -16,7 +16,7 @@ export async function tokenAdd(id: number) {
         await Db.redisDb["sub"].set(0, token, id.toString(), 7200);
         return token;
     } catch (e) {
-        Logger.error(e);
+        Log.error(e);
         return null;
     }
 }
@@ -29,7 +29,7 @@ export async function tokenGet(token: string) {
     try {
         return await Db.redisDb["sub"].get(0, token);
     } catch (e) {
-        Logger.error(e);
+        Log.error(e);
         return null;
     }
 }
@@ -42,7 +42,7 @@ export async function tokenTtl(token: string) {
     try {
         return await Db.redisDb["sub"].ttl(0, token) as number;
     } catch (e) {
-        Logger.error(e);
+        Log.error(e);
         return -2;
     }
 }
@@ -56,7 +56,7 @@ export async function tokenExpire(token: string, seconds: number) {
     try {
         return await Db.redisDb["sub"].expire(0, token, seconds) as number;
     } catch (e) {
-        Logger.error(e);
+        Log.error(e);
         return -2;
     }
 }
@@ -85,7 +85,7 @@ export async function tokenUse(ctx: ParameterizedContext, next: Next) {
         ctx.userInfo = {id: Number(await tokenGet(token))};
         await next();
     } catch (err) {
-        Logger.error(err);
+        Log.error(err);
         ctx.body = restful.error('服务器错误');
     }
 }

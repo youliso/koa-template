@@ -1,5 +1,5 @@
 import {Pool, createPool, escape} from 'mysql2/promise';
-import Logger from "../lib/logger";
+import Log from "../lib/log";
 
 export class MysqlDb {
     dbClient: Pool;
@@ -17,7 +17,7 @@ export class MysqlDb {
             connection.release();
             return rows[0];
         } catch (e) {
-            Logger.error(e.toString());
+            Log.error(e.toString());
             return null;
         }
     }
@@ -31,7 +31,7 @@ export class MysqlDb {
             connection.release();
             return rows[0][Object.keys(rows[0])[0]];
         } catch (e) {
-            Logger.error(e.toString());
+            Log.error(e.toString());
             return null;
         }
     }
@@ -45,7 +45,7 @@ export class MysqlDb {
             connection.release();
             return rows;
         } catch (e) {
-            Logger.error(e.toString());
+            Log.error(e.toString());
             return null;
         }
     }
@@ -59,7 +59,7 @@ export class MysqlDb {
             connection.release();
             return rows;
         } catch (e) {
-            Logger.error(e.toString());
+            Log.error(e.toString());
             return null;
         }
     }

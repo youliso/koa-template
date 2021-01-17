@@ -30,7 +30,7 @@ configure({
     }
 })
 
-export default class Logger {
+export default class Log {
 
     constructor() {
     }

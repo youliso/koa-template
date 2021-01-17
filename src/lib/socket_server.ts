@@ -1,9 +1,12 @@
-import {Server, Socket as Io} from "socket.io";
+import {Server as serverIo, Socket as socketIo} from "socket.io";
 import {isNull, restful, SOCKET_MSG_TYPE} from './index';
-import Logger from "./logger";
+import Log from "./log";
 import {tokenGet, tokenExpire} from './token';
+import * as Http from "http";
 
-export interface SocketClient extends Io {
+const Config = require('../config/config.json');
+
+export interface SocketClient extends socketIo {
     userId?: number
 }
 
@@ -13,15 +16,15 @@ export interface SocketCtx {
     data?: unknown
 }
 
-class Socket {
-    private static instance: Socket;
-    private io: Server;
+class SocketServer {
+    private static instance: SocketServer;
+    private io: serverIo;
     private router: unknown;
     public clients: { [key: string]: SocketClient } = {};
 
     static getInstance() {
-        if (!Socket.instance) Socket.instance = new Socket();
-        return Socket.instance;
+        if (!SocketServer.instance) SocketServer.instance = new SocketServer();
+        return SocketServer.instance;
     }
 
     constructor() {
@@ -37,8 +40,18 @@ class Socket {
     }
 
     //初始化
-    init(io: Server, router: unknown) {
-        this.io = io;
+    init(server: Http.Server, origin: string, router: unknown) {
+        this.io = new serverIo(server, {
+            cors: {
+                origin,
+                ...Config.cors
+            } as any,
+            path: Config.socketPath,
+            serveClient: false,
+            pingInterval: 10000,
+            pingTimeout: 5000,
+            cookie: false
+        });
         this.router = router;
         this.tokenRefresh();
         this.io.sockets.on('connection', async (client: SocketClient) => {
@@ -103,15 +116,15 @@ class Socket {
                 this.router[path[0]][path[1]](client, ctx);
             });
             client.on('disconnect', async () => {
-                Logger.info(`[socket-close] ${client.userId}`);
+                Log.info(`[socket-close] ${client.userId}`);
                 delete this.clients[client.userId];
             });
             client.on('error', async err => {
-                Logger.info(`[socket-error] ${client.userId}`);
+                Log.info(`[socket-error] ${client.userId}`);
                 client.disconnect(true);
-                Logger.error(err);
+                Log.error(err);
             });
-            Logger.info(`[socket-init] ${client.userId} ${client.handshake.auth["authorization"]}`);
+            Log.info(`[socket-init] ${client.userId} ${client.handshake.auth["authorization"]}`);
             client.send(restful.socketMsg({
                 type: SOCKET_MSG_TYPE.INIT,
                 key: null,
@@ -121,4 +134,4 @@ class Socket {
     }
 }
 
-export const Sockets = Socket.getInstance();
+export const socketServer = SocketServer.getInstance();

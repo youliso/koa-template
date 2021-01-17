@@ -4,10 +4,9 @@ import * as Koa from 'koa';
 import * as Static from 'koa-static';
 import * as BodyParser from 'koa-bodyparser';
 import * as Cors from 'koa2-cors';
-import {Server as socketServer} from "socket.io";
 import {tokenUse} from './lib/token';
-import Logger from './lib/logger';
-import {Sockets} from './lib/socket';
+import Log from './lib/log';
+import {socketServer} from './lib/socket_server';
 import Timer from './lib/timer';
 import Router from './router';
 
@@ -20,16 +19,16 @@ class App {
 
     async init() {
         //onerror
-        koa.on('error', err => Logger.error(err));
+        koa.on('error', err => Log.error(err));
         //init
         koa.use(async (ctx, next) => {
             if (ctx.request.path === "/favicon.ico") return;
             await next();
             if (ctx.request.path === "/") ctx.body = "Copyright (c) 2020 youliso";
-            Logger.access(`${ctx.originalUrl} ${ctx.header["x-real-ip"] || "-"} ${ctx.header["user-agent"]}`);
+            Log.access(`${ctx.originalUrl} ${ctx.header["x-real-ip"] || "-"} ${ctx.header["user-agent"]}`);
         });
         //origin
-        let origin = null;
+        let origin: string = null;
         koa.use(Cors({
             origin: (ctx: Koa.ParameterizedContext) => {
                 let i = Config.domainWhiteList.indexOf(ctx.header.origin);//域名白名单
@@ -46,19 +45,8 @@ class App {
         koa.use(Static(join(__dirname, '../resources/static')));
         koa.use(await Router.http())
         const server = http.createServer(koa.callback());
-        const io = new socketServer(server, {
-            cors: {
-                origin,
-                ...Config.cors
-            } as any,
-            path: Config.socketPath,
-            serveClient: false,
-            pingInterval: 10000,
-            pingTimeout: 5000,
-            cookie: false
-        });
         //socket模块初始化
-        Sockets.init(io, await Router.socket());
+        socketServer.init(server, origin, await Router.socket());
         //定时器模块开启
         await Timer.start();
         //绑定端口
@@ -69,4 +57,4 @@ class App {
     }
 }
 
-new App().init().catch(e => Logger.error(e));
+new App().init().catch(e => Log.error(e));
