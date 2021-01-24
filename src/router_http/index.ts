@@ -1,5 +1,5 @@
-import * as Router from 'koa-router';
-import {restful} from '../lib';
+import Router from 'koa-router';
+import *as restful from '../lib/restful';
 
 const index = new Router();
 

@@ -1,6 +1,7 @@
 import {Next, ParameterizedContext} from "koa";
 import Db from './db';
-import {isNull, restful} from './';
+import {isNull} from './';
+import * as restful from './restful';
 import {encodeMd5, randomSize} from "./crypto";
 import Log from "./log";
 

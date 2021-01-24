@@ -1,5 +1,7 @@
 import {Server as serverIo, Socket as socketIo} from "socket.io";
-import {isNull, restful, SOCKET_MSG_TYPE} from './index';
+import {isNull} from './index';
+import {SOCKET_MSG_TYPE} from "./restful";
+import * as restful from './restful';
 import Log from "./log";
 import {tokenGet, tokenExpire} from './token';
 import * as Http from "http";

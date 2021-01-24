@@ -1,9 +1,9 @@
-import * as http from 'http';
+import http from 'http';
 import {join} from 'path';
-import * as Koa from 'koa';
-import * as Static from 'koa-static';
-import * as BodyParser from 'koa-bodyparser';
-import * as Cors from 'koa2-cors';
+import Koa from 'koa';
+import Static from 'koa-static';
+import BodyParser from 'koa-bodyparser';
+import Cors from 'koa2-cors';
 import {tokenUse} from './lib/token';
 import Log from './lib/log';
 import {socketServer} from './lib/socket_server';

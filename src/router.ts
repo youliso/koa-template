@@ -1,4 +1,4 @@
-import * as KRouter from 'koa-router';
+import KRouter from 'koa-router';
 
 class Router {
     public routerHttp: KRouter;
