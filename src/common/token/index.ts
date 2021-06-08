@@ -1,11 +1,11 @@
 import { Next, ParameterizedContext } from 'koa';
-import { isNull } from './';
-import { encodeMd5, randomSize } from './crypto';
-import Log from './log';
+import { isNull } from '@/lib';
+import { encodeMd5, randomSize } from '@/lib/crypto';
+import Log from '@/lib/log';
 
 const Config = require('../config/config.json');
 
-let Tokens: { [key: string]: { time: number; id: number } } = {};//TODO
+let Tokens: { [key: string]: { time: number; id: number } } = {}; //TODO
 
 /**
  * 通过用户id添加token

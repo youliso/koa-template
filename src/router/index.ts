@@ -1,7 +1,7 @@
 import Koa from 'koa';
 import Router from 'koa-router';
-import { controllers } from '@/decorators/http';
-import { sockets } from '@/decorators/socket';
+import { controllers } from '@/common/decorators/http';
+import { sockets } from '@/common/decorators/socket';
 import { socketServer } from '@/lib/socket';
 export * from './modular'; //载入模块
 

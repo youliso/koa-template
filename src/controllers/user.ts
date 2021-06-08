@@ -1,5 +1,5 @@
 import { SocketClient, SocketCtx } from '@/lib/socket';
-import { Socket, SocketMapping } from '@/decorators/socket';
+import { Socket, SocketMapping } from '@/common/decorators/socket';
 
 @Socket('/user')
 export default class Index {
