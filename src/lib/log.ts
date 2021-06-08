@@ -1,49 +1,55 @@
-import {join} from 'path';
-import {configure, getLogger} from 'log4js';
+import { join } from 'path';
+import { configure, getLogger } from 'log4js';
+class Log {
+  private static instance: Log;
 
-configure({
-    appenders: {
+  static getInstance() {
+    if (!Log.instance) Log.instance = new Log();
+    return Log.instance;
+  }
+
+  constructor() {
+    configure({
+      appenders: {
         access: {
-            type: 'dateFile',
-            pattern: '-yyyy-MM-dd.log',
-            filename: join('logs/', 'access.log')
+          type: 'dateFile',
+          pattern: '-yyyy-MM-dd.log',
+          filename: join('logs/', 'access.log')
         },
         error: {
-            type: 'dateFile',
-            pattern: '-yyyy-MM-dd.log',
-            filename: join('logs/', 'error.log')
+          type: 'dateFile',
+          pattern: '-yyyy-MM-dd.log',
+          filename: join('logs/', 'error.log')
         },
         info: {
-            type: 'dateFile',
-            pattern: '-yyyy-MM-dd.log',
-            filename: join('logs/', 'info.log')
+          type: 'dateFile',
+          pattern: '-yyyy-MM-dd.log',
+          filename: join('logs/', 'info.log')
         },
         out: {
-            type: 'console'
+          type: 'console'
         }
-    },
-    categories: {
-        default: {appenders: ['out'], level: 'info'},
-        access: {appenders: ['access'], level: 'info'},
-        error: {appenders: ['error'], level: 'WARN'},
-        info: {appenders: ['info'], level: 'info'}
-    }
-})
+      },
+      categories: {
+        default: { appenders: ['out'], level: 'info' },
+        access: { appenders: ['access'], level: 'info' },
+        error: { appenders: ['error'], level: 'WARN' },
+        info: { appenders: ['info'], level: 'info' }
+      }
+    });
+  }
 
-export default class Log {
+  access(e: unknown) {
+    getLogger('access').info(e);
+  }
 
-    constructor() {
-    }
+  error(e: unknown) {
+    getLogger('error').error(e);
+  }
 
-    static access(e: unknown) {
-        getLogger('access').info(e);
-    }
-
-    static error(e: unknown) {
-        getLogger('error').error(e);
-    }
-
-    static info(e: unknown) {
-        getLogger('info').info(e);
-    }
+  info(e: unknown) {
+    getLogger('info').info(e);
+  }
 }
+
+export default Log.getInstance();

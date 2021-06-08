@@ -1,25 +1,27 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "suppressImplicitAnyIndexErrors": true,
-    "noImplicitAny": true,
-    "inlineSources": false,
-    "sourceMap": false,
-    "outDir": "dist",
-    "baseUrl": ".",
     "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": "./",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "typeRoots": [
-      "./node_modules/@types"
-    ]
+    "suppressImplicitAnyIndexErrors": true,
+    "experimentalDecorators": true,
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
+  "include": ["src/**/*.d.ts", "src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules/**/*.*"]
 }
+ 

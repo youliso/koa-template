@@ -20,10 +20,5 @@
       "Content-Type",
       "Authorization"
     ]
-  },
-  "noToken": [
-    "/index/get",
-    "/user/login",
-    "/user/register"
-  ]
+  }
 }

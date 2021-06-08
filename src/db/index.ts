@@ -1,6 +1,6 @@
-import {MysqlDb} from "../db/mysqldb";
-import {RedisDb} from "../db/redisdb";
-import {MongoDb} from "../db/mongodb";
+import {MysqlDb} from "./mysqldb";
+import {RedisDb} from "./redisdb";
+import {MongoDb} from "./mongodb";
 
 const dbConfig = require('../config/db.json');
 
