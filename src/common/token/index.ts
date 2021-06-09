@@ -1,20 +1,17 @@
 import { Next, ParameterizedContext } from 'koa';
+import Db from '@/common/db';
 import { isNull } from '@/lib';
 import { encodeMd5, randomSize } from '@/lib/crypto';
 import Log from '@/lib/log';
-
-const Config = require('../config/config.json');
-
-let Tokens: { [key: string]: { time: number; id: number } } = {}; //TODO
 
 /**
  * 通过用户id添加token
  * @param id
  */
-export async function tokenAdd(id: number, time: number = 7200) {
+export async function tokenAdd(id: number) {
   try {
     let token = encodeMd5(id.toString() + randomSize(10));
-    Tokens[token] = { id, time };
+    await Db.redisDb['sub'].set(0, token, id.toString(), 7200);
     return token;
   } catch (e) {
     Log.error(e);
@@ -28,7 +25,7 @@ export async function tokenAdd(id: number, time: number = 7200) {
  */
 export async function tokenGet(token: string) {
   try {
-    return Tokens[token];
+    return await Db.redisDb['sub'].get(0, token);
   } catch (e) {
     Log.error(e);
     return null;
@@ -41,7 +38,21 @@ export async function tokenGet(token: string) {
  */
 export async function tokenTtl(token: string) {
   try {
-    return Tokens[token].time;
+    return (await Db.redisDb['sub'].ttl(0, token)) as number;
+  } catch (e) {
+    Log.error(e);
+    return -2;
+  }
+}
+
+/**
+ * 更新token剩余时间
+ * @param token
+ * @param seconds
+ */
+export async function tokenExpire(token: string, seconds: number) {
+  try {
+    return (await Db.redisDb['sub'].expire(0, token, seconds)) as number;
   } catch (e) {
     Log.error(e);
     return -2;
@@ -49,22 +60,19 @@ export async function tokenTtl(token: string) {
 }
 
 export async function tokenUse(ctx: ParameterizedContext, next: Next) {
-  try {
-    let token = ctx.request.headers['authorization'];
-    if (isNull(token)) {
-      ctx.body = '没有token';
-      return;
-    }
-    let outTime = await tokenTtl(token);
-    if (outTime <= 0) {
-      ctx.body = '没有token，或已过期';
-      return;
-    }
-    ctx.set('Authorization', token);
-    ctx.userInfo = { id: Number(await tokenGet(token)) };
-    await next();
-  } catch (err) {
-    Log.error(err);
-    ctx.body = '服务器错误';
+  let token = ctx.request.headers['authorization'];
+  if (isNull(token)) {
+    ctx.body = '没有token';
+    return;
   }
+  let outTime = await tokenTtl(token);
+  if (outTime <= 0) {
+    ctx.body = '没有token，或已过期';
+    return;
+  } else {
+    if (outTime <= 1800) await tokenExpire(token, 7200);
+    ctx.set('Authorization', token);
+  }
+  ctx.userInfo = { id: Number(await tokenGet(token)) };
+  await next();
 }
