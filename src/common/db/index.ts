@@ -1,14 +1,14 @@
 import {MysqlDb} from "./mysqldb";
 import {RedisDb} from "./redisdb";
-import {MongoDb} from "./mongodb";
+// import {MongoDb} from "./mongodb";
 
-const dbConfig = require('../config/db.json');
+const dbConfig = require('@/cfg/db.json');
 
 class Db {
     private static instance: Db;
     public mysqlDb: { [key: string]: MysqlDb } = {};
     public redisDb: { [key: string]: RedisDb } = {};
-    public mongoDb: { [key: string]: MongoDb } = {};
+    // public mongoDb: { [key: string]: MongoDb } = {};
 
     static getInstance() {
         if (!Db.instance) Db.instance = new Db();
@@ -25,9 +25,9 @@ class Db {
                     case 'redis':
                         this.redisDb[i] = new RedisDb(dbConfig[i].data);
                         break;
-                    case 'mongo':
-                        this.mongoDb[i] = new MongoDb(dbConfig[i].data);
-                        break;
+                    // case 'mongo':
+                    //     this.mongoDb[i] = new MongoDb(dbConfig[i].data);
+                    //     break;
                 }
         }
     }
