@@ -1,8 +1,7 @@
+import Cfg from '@/common/cfg';
 import fetch, { RequestInit, Headers } from 'node-fetch';
 import AbortController from 'node-abort-controller';
 import querystring from 'querystring';
-
-const { appUrl } = require('@/cfg/index.json');
 
 export interface NetOpt extends RequestInit {
   authorization?: string;
@@ -96,7 +95,6 @@ function fetchPromise(url: string, sendData: NetOpt): Promise<any> {
  * @param param
  */
 export async function net(url: string, param: NetOpt = {}): Promise<any> {
-  if (url.indexOf('http://') === -1 && url.indexOf('https://') === -1) url = appUrl + url;
   let sendData: NetOpt = {
     isHeaders: param.isHeaders,
     isStringify: param.isStringify,

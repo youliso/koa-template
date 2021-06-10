@@ -1,3 +1,4 @@
+import Cfg from '@/common/cfg';
 import { Server as serverIo, Socket as socketIo } from 'socket.io';
 import { io, Socket } from 'socket.io-client';
 import { ManagerOptions } from 'socket.io-client/build/manager';
@@ -5,8 +6,6 @@ import { SocketOptions } from 'socket.io-client/build/socket';
 import { isNull } from './index';
 import Log from './log';
 import * as Http from 'http';
-
-const Config = require('@/cfg/index.json');
 
 export interface SocketClient extends socketIo {
   userId?: number;
@@ -53,9 +52,9 @@ class SocketServer {
     this.io = new serverIo(server, {
       cors: {
         origin,
-        ...Config.cors
+        ...Cfg.get('index.cors')
       } as any,
-      path: Config.socketPath,
+      path: Cfg.get('index.socketPath'),
       serveClient: false,
       pingInterval: 10000,
       pingTimeout: 5000,

@@ -8,12 +8,14 @@ import Bodyparser from 'koa-bodyparser';
 import Router from '@/router';
 import { socketServer } from '@/lib/socket';
 import Log from '@/lib/log';
-import Timer from '@//lib/timer';
-
-const Config = require('@/cfg/index.json');
-const koa = new Koa();
+import Timer from '@/lib/timer';
+import Cfg from './common/cfg';
+import { cfgInit } from '@/common/cfg/modular';
 
 (async () => {
+  await cfgInit();
+  const port = Cfg.get('index.port');
+  const koa = new Koa();
   const server = http.createServer(koa.callback());
 
   //onerror
@@ -32,11 +34,12 @@ const koa = new Koa();
   koa.use(
     Cors({
       origin: (ctx: Koa.ParameterizedContext) => {
-        let i = Config.domainWhiteList.indexOf(ctx.header.origin); //域名白名单
-        origin = Config.domainWhiteList[i];
-        return Config.domainWhiteList[i];
+        const domainWhiteList = Cfg.get<string[]>('index.domainWhiteList');
+        let i = domainWhiteList.indexOf(ctx.header.origin); //域名白名单
+        origin = domainWhiteList[i];
+        return domainWhiteList[i];
       },
-      ...Config.cors
+      ...Cfg.get('index.cors')
     })
   );
 
@@ -59,11 +62,9 @@ const koa = new Koa();
   Router(koa);
 
   //listen
-  server.listen(Config.port, () => {
+  server.listen(port, () => {
     console.log(
-      `[success] http://127.0.0.1:${
-        Config.port
-      } ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
+      `[success] http://127.0.0.1:${port} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
     );
   });
 })();
