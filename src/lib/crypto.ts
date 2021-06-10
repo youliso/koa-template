@@ -1,6 +1,6 @@
 import {createHmac, scryptSync, randomBytes, createCipheriv, createDecipheriv} from 'crypto';
 
-const cryptoConfig = require('../config/crypto.json');
+const cryptoConfig = require('@/cfg/crypto.json');
 
 /**
  * Md5加密
