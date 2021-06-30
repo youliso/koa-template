@@ -1,32 +1,36 @@
 import Koa from 'koa';
 import Router from 'koa-router';
-import { controllers } from '@/common/decorators/http';
-import { sockets } from '@/common/decorators/socket';
+import { routes, ProtocolType } from '@/common/decorators';
 import { socketServer } from '@/lib/socket';
+
 export * from './modular'; //载入模块
 
-const router = new Router();
+const httpRouters = new Router();
+const socketRouters: { [key: string]: Function[] } = {};
+
 /**
  * 初始化路由
  */
 export default async (app: Partial<Koa.DefaultState & Koa.DefaultContext>) => {
-  controllers.forEach((item) => {
+  routes.forEach((route) => {
     // 获取每个路由的前缀
-    const prefix = item.constructor.prefix;
-    let url = item.url;
-    if (prefix) url = `${prefix}${url}`; // 组合真正链接
-    console.log('[modular|http]', url);
-    router[item.method](url, ...item.middleware, item.handler); // 创建路由
+    const prefix = route.constructor.prefix;
+    let path = route.path;
+    if (prefix) path = `${prefix}${path}`;
+
+    // 创建路由
+    switch (route.protocol) {
+      case ProtocolType.HTTP:
+        console.log('[modular|http]', path);
+        httpRouters[route.method](path, ...route.middleware, route.handler);
+        break;
+      case ProtocolType.SOCKET:
+        console.log('[modular|socket]', path);
+        socketRouters[`${prefix}${path}`] = [...route.middleware, route.handler];
+        break;
+    }
   });
-  let socketRouters: { [key: string]: Function[] } = {};
-  sockets.forEach((item) => {
-    // 获取每个路由的前缀
-    const prefix = item.constructor.prefix;
-    let url = item.url;
-    if (prefix) url = `${prefix}${url}`; // 组合真正链接
-    console.log('[modular|socket]', url);
-    socketRouters[`${prefix}${url}`] = [...item.middleware, item.handler];
-  });
+
   socketServer.start(socketRouters);
-  app.use(router.routes()).use(router.allowedMethods()); // 路由装箱
+  app.use(httpRouters.routes()).use(httpRouters.allowedMethods()); // 路由装箱
 };
