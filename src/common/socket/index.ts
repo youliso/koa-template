@@ -3,8 +3,8 @@ import { Server as serverIo, Socket as socketIo } from 'socket.io';
 import { io, Socket } from 'socket.io-client';
 import { ManagerOptions } from 'socket.io-client/build/manager';
 import { SocketOptions } from 'socket.io-client/build/socket';
-import { isNull } from './index';
-import Log from './log';
+import { isNull } from '@/utils';
+import Log from '@/utils/log';
 import * as Http from 'http';
 
 export interface SocketClient extends socketIo {
@@ -27,6 +27,7 @@ export enum SOCKET_MSG_TYPE {
 class SocketServer {
   private static instance: SocketServer;
   private io: serverIo;
+  public routers: { [key: string]: Function[] } = {};
   public clients: { [key: string]: SocketClient } = {};
 
   static getInstance() {
@@ -34,90 +35,71 @@ class SocketServer {
     return SocketServer.instance;
   }
 
-  constructor() {}
-
-  //token刷新
-  tokenRefresh() {
-    setInterval(async () => {
-      for (let i in this.clients) {
-        if (this.clients[i]) {
-          //TODO
-        }
-      }
-    }, 1000 * 60 * 60);
+  constructor() {
   }
 
-  //初始化
-  init(server: Http.Server, origin: string) {
+  // 装载路由
+  setRouters(routers: { [key: string]: Function[] }) {
+    this.routers = routers;
+  }
+
+  // 初始化
+  init(server: Http.Server) {
+    const corsOpt = Cfg.get<{ [key: string]: any }>('index.cors');
+    const domainWhiteList = Cfg.get<string[]>('index.domainWhiteList');
     this.io = new serverIo(server, {
       cors: {
-        origin,
-        ...Cfg.get('index.cors')
-      } as any,
-      path: Cfg.get('index.socketPath'),
+        origin: (origin, callback) => {
+          if (domainWhiteList.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+          } else {
+            callback(new Error('Not allowed by CORS'));
+          }
+        },
+        methods: corsOpt.allowMethods,
+        allowedHeaders: corsOpt.allowHeaders,
+        exposedHeaders: corsOpt.exposeHeaders
+      },
+      path: Cfg.get('socket.path'),
       serveClient: false,
       pingInterval: 10000,
       pingTimeout: 5000,
       cookie: false
     });
-  }
 
-  start(routers: { [key: string]: Function[] }) {
-    this.tokenRefresh();
     this.io.sockets.on('connection', async (client: SocketClient) => {
-      if (isNull(client.handshake.auth['authorization'])) {
+      const authorization = client.handshake.auth['authorization'];
+      if (isNull(authorization)) {
         client.send({
           type: SOCKET_MSG_TYPE.ERROR,
-          value: 'Token为空!(10秒后程序将退出!)'
+          value: 'Token为空'
         });
         client.disconnect(true);
         return;
       }
-      let userId = ''; //TODO
+      const userId = authorization; //TODO 此处应判断凭证是否有效
       if (isNull(userId)) {
+        client.send({
+          type: SOCKET_MSG_TYPE.ERROR,
+          value: 'Token无效'
+        });
         client.disconnect(true);
         return;
       }
       if (this.clients[userId]) {
         client.send({
           type: SOCKET_MSG_TYPE.ERROR,
-          value: '账号已登录!(10秒后程序将退出!)'
+          value: '账号已登录'
         });
         client.disconnect(true);
         return;
       }
       client.userId = Number(userId);
       this.clients[client.userId] = client;
-      client.on('message', async (data) => {
-        if (isNull(data)) {
-          client.send({
-            type: SOCKET_MSG_TYPE.ERROR,
-            value: '参数为空!(10秒后程序将退出!)'
-          });
-          return;
+      client.conn.on('packetCreate', async (packet: any) => {
+        if (packet.type === 'ping') {  // TODO token
+
         }
-        try {
-          data = JSON.parse(data);
-        } catch (e) {
-          client.send({
-            type: SOCKET_MSG_TYPE.ERROR,
-            value: '参数错误!(10秒后程序将退出!)'
-          });
-          return;
-        }
-        if (!data.path) {
-          client.send({
-            type: SOCKET_MSG_TYPE.ERROR,
-            value: '参数错误!(10秒后程序将退出!)'
-          });
-          return;
-        }
-        let ctx: SocketCtx = {
-          clients: this.clients, //客户端组
-          key: data.key,
-          data: data.data || null
-        };
-        for (let fun of routers[data.path]) fun(client, ctx);
       });
       client.on('disconnect', async () => {
         Log.info(`[socket-close] ${client.userId}`);
@@ -127,6 +109,37 @@ class SocketServer {
         Log.info(`[socket-error] ${client.userId}`);
         client.disconnect(true);
         Log.error(err);
+      });
+      client.on('message', async (data) => {
+        if (isNull(data)) {
+          client.send({
+            type: SOCKET_MSG_TYPE.ERROR,
+            value: '参数为空'
+          });
+          return;
+        }
+        try {
+          data = JSON.parse(data);
+        } catch (e) {
+          client.send({
+            type: SOCKET_MSG_TYPE.ERROR,
+            value: '参数错误'
+          });
+          return;
+        }
+        if (!data.path) {
+          client.send({
+            type: SOCKET_MSG_TYPE.ERROR,
+            value: '参数错误'
+          });
+          return;
+        }
+        let ctx: SocketCtx = {
+          clients: this.clients, //客户端组
+          key: data.key,
+          data: data.data || null
+        };
+        for (let fun of this.routers[data.path]) fun(client, ctx);
       });
       Log.info(`[socket-init] ${client.userId} ${client.handshake.auth['authorization']}`);
       client.send({

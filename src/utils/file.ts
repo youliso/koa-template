@@ -1,12 +1,12 @@
 import fs, { MakeDirectoryOptions } from 'fs';
 import { createInterface } from 'readline';
-import { resolve, dirname, extname } from 'path';
-import { isNull } from '@/lib';
+import { resolve, extname } from 'path';
+import { isNull } from '@/utils';
 
 /**
  * 读取目录下指定后缀文件
  * @param path
- * @param fileName
+ * @param suffix
  */
 export function fileBySuffix(path: string, suffix: string) {
   if (path.substr(0, 1) !== '/' && path.indexOf(':') === -1) path = resolve(path);
@@ -56,7 +56,7 @@ export function delDir(path: string): void {
 export function access(path: string) {
   if (path.substr(0, 1) !== '/' && path.indexOf(':') === -1) path = resolve(path);
   return new Promise((resolve) =>
-    fs.access(path, fs.constants.F_OK | fs.constants.W_OK, (err) => {
+    fs.access(path, fs.constants.F_OK, (err) => {
       if (err) err.code === 'ENOENT' ? resolve(0) : resolve(1);
       else resolve(2);
     })
@@ -136,7 +136,7 @@ export function readLine(path: string, index?: number): Promise<string | any[]> 
 export async function mkdir(path: string, options: MakeDirectoryOptions) {
   if (path.substr(0, 1) !== '/' && path.indexOf(':') === -1) path = resolve(path);
   return new Promise((resolve) => {
-    fs.mkdir(dirname(path), options || { recursive: true }, (err) => {
+    fs.mkdir(path, options || { recursive: true }, (err) => {
       if (err) {
         resolve(0);
       }

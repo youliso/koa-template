@@ -1,22 +1,21 @@
 import http from 'http';
 import { join } from 'path';
 import Koa from 'koa';
-import Cors from 'koa2-cors';
 import Static from 'koa-static';
 import Compress from 'koa-compress';
 import Bodyparser from 'koa-bodyparser';
 import Router from '@/router';
-import { socketServer } from '@/lib/socket';
-import Log from '@/lib/log';
-import Timer from '@/lib/timer';
-import Cfg from './common/cfg';
+import { socketServer } from '@/common/socket';
+import Log from '@/utils/log';
+import Timer from '@/utils/timer';
+import Cfg from '@/common/cfg';
+import cors from '@/common/cors';
 import { cfgInit } from '@/common/cfg/modular';
 
 (async () => {
   await cfgInit();
   const port = Cfg.get('index.port');
   const koa = new Koa();
-  const server = http.createServer(koa.callback());
 
   //onerror
   koa.on('error', (err) => Log.error(err));
@@ -30,18 +29,14 @@ import { cfgInit } from '@/common/cfg/modular';
   });
 
   //cors
-  let origin: string = null;
-  koa.use(
-    Cors({
-      origin: (ctx: Koa.ParameterizedContext) => {
-        const domainWhiteList = Cfg.get<string[]>('index.domainWhiteList');
-        let i = domainWhiteList.indexOf(ctx.header.origin); //域名白名单
-        origin = domainWhiteList[i];
-        return domainWhiteList[i];
-      },
-      ...Cfg.get('index.cors')
-    })
-  );
+  const corsOpt = Cfg.get<{ [key: string]: any }>('index.cors');
+  const domainWhiteList = Cfg.get<string[]>('index.domainWhiteList');
+  koa.use(cors({
+    origin: (ctx: Koa.ParameterizedContext) => domainWhiteList[domainWhiteList.indexOf(ctx.header.origin)] || 'false',
+    allowMethods: corsOpt.allowMethods,
+    allowHeaders: corsOpt.allowHeaders,
+    exposeHeaders: corsOpt.exposeHeaders
+  }));
 
   //compress
   koa.use(Compress());
@@ -52,14 +47,15 @@ import { cfgInit } from '@/common/cfg/modular';
   //static
   koa.use(Static(join(__dirname, '../resources/static')));
 
-  //socket
-  socketServer.init(server, origin);
-
   //timer
   await Timer.start();
 
   //router
   Router(koa);
+
+  //socket
+  const server = http.createServer(koa.callback());
+  socketServer.init(server);
 
   //listen
   server.listen(port, () => {

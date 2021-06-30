@@ -1,4 +1,4 @@
-import { isNull } from '@/lib';
+import { isNull } from '@/utils';
 
 /**
  * 协议类型

@@ -1,4 +1,4 @@
-import { net } from '@/lib/net';
+import { net } from '@/utils/net';
 
 (async () => {
   console.log('net get baidu');

@@ -1,4 +1,4 @@
-import { readFile } from '@/lib/file';
+import { readFile } from '@/utils/file';
 import { resolve, basename } from 'path';
 type Obj<Value> = {} & {
   [key: string]: Value | Obj<Value>;

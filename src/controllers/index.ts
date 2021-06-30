@@ -1,7 +1,7 @@
 import { Next, ParameterizedContext } from 'koa';
 import { RequestMethod, Controller, RequestMapping, ProtocolType } from '@/common/decorators';
 import { IndexServer } from '@/servers';
-import { SocketClient, SocketCtx } from '@/lib/socket';
+import { SocketClient, SocketCtx } from '@/common/socket';
 
 const indexServer = new IndexServer();
 
