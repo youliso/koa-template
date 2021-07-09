@@ -12,7 +12,7 @@ export enum ProtocolType {
  * 注册结构
  */
 export interface Routes {
-  path: string;
+  path?: string;
   protocol?: ProtocolType;
   method?: RequestMethod;
   middleware?: Function[];
