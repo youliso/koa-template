@@ -1,4 +1,3 @@
-import { Next, ParameterizedContext } from 'koa';
 import { Job, scheduleJob } from 'node-schedule';
 export interface taskOpt {
   key: string;

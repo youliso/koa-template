@@ -1,5 +1,5 @@
 import {Pool, createPool, escape} from 'mysql2/promise';
-import Log from "@/utils/log";
+import Log from "@/common/log";
 
 export class MysqlDb {
     dbClient: Pool;

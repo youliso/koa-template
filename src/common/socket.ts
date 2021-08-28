@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import { ManagerOptions } from 'socket.io-client/build/manager';
 import { SocketOptions } from 'socket.io-client/build/socket';
 import { isNull } from '@/utils';
-import Log from '@/utils/log';
+import Log from '@/common/log';
 import * as Http from 'http';
 
 export interface SocketClient extends socketIo {

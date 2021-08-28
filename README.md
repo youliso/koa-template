@@ -1,5 +1,5 @@
-# koa2-socket
-koa2 socket mysql redis mongo
+# koa2-template
+koa2 template
 
 ## 安装依赖
 ```shell

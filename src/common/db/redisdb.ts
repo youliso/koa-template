@@ -1,5 +1,5 @@
 import {createClient, RedisClient} from 'redis';
-import Log from "@/utils/log";
+import Log from "@/common/log";
 
 export class RedisDb {
     dbClient: RedisClient;

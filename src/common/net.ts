@@ -1,14 +1,21 @@
-import Cfg from '@/common/cfg';
 import fetch, { RequestInit, Headers } from 'node-fetch';
-import AbortController from 'node-abort-controller';
+import { AbortController } from 'node-abort-controller';
 import querystring from 'querystring';
+
+const { timeout, appUrl } = require('@/cfg/net.json');
 
 export interface NetOpt extends RequestInit {
   authorization?: string;
   isStringify?: boolean; //是否stringify参数（非GET请求使用）
   isHeaders?: boolean; //是否获取headers
   data?: any;
+  body?: any;
   type?: NET_RESPONSE_TYPE; //返回数据类型
+}
+
+export interface TimeOutAbort {
+  signal: AbortSignal;
+  id: NodeJS.Timeout;
 }
 
 export enum NET_RESPONSE_TYPE {
@@ -22,26 +29,19 @@ export enum NET_RESPONSE_TYPE {
  * 创建 AbortController
  */
 export function AbortSignal() {
-  return new AbortController();
-}
-
-/**
- * 错误信息包装
- */
-export function errorReturn(msg: string): { [key: string]: unknown } {
-  return { code: 400, msg };
+ return new AbortController();
 }
 
 /**
  * 超时处理
  * @param outTime
  */
-function timeoutPromise(outTime: number): Promise<any> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(errorReturn('超时'));
-    }, outTime);
-  });
+function timeOutAbort(outTime: number): TimeOutAbort {
+  const controller = AbortSignal();
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, outTime);
+  return { signal: controller.signal, id: timeoutId };
 }
 
 /**
@@ -49,7 +49,7 @@ function timeoutPromise(outTime: number): Promise<any> {
  * @param url
  * @param sendData
  */
-function fetchPromise(url: string, sendData: NetOpt): Promise<any> {
+function fetchPromise<T>(url: string, sendData: NetOpt): Promise<T> {
   return fetch(url, sendData)
     .then((res) => {
       if (res.status >= 200 && res.status < 300) return res;
@@ -60,66 +60,73 @@ function fetchPromise(url: string, sendData: NetOpt): Promise<any> {
         case NET_RESPONSE_TYPE.TEXT:
           return sendData.isHeaders
             ? {
-                headers: await res.headers,
-                data: await res.text()
-              }
+              headers: await res.headers,
+              data: await res.text()
+            }
             : await res.text();
         case NET_RESPONSE_TYPE.JSON:
           return sendData.isHeaders
             ? {
-                headers: await res.headers,
-                data: await res.json()
-              }
+              headers: await res.headers,
+              data: await res.json()
+            }
             : await res.json();
         case NET_RESPONSE_TYPE.BUFFER:
           return sendData.isHeaders
             ? {
-                headers: await res.headers,
-                data: await res.arrayBuffer()
-              }
+              headers: await res.headers,
+              data: await res.arrayBuffer()
+            }
             : await res.arrayBuffer();
         case NET_RESPONSE_TYPE.BLOB:
           return sendData.isHeaders
             ? {
-                headers: await res.headers,
-                data: await res.blob()
-              }
+              headers: await res.headers,
+              data: await res.blob()
+            }
             : await res.blob();
       }
-    });
+    })
+    .catch((err) => ({ code: 400, msg: err.message }));
 }
 
 /**
- * 处理函数
+ * http请求
  * @param url
  * @param param
  */
-export async function net(url: string, param: NetOpt = {}): Promise<any> {
+export async function net<T>(url: string, param: NetOpt = {}): Promise<T> {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) url = appUrl + url;
+  let abort: TimeOutAbort = null;
+  if (!param.signal) abort = timeOutAbort(param.timeout || timeout);
   let sendData: NetOpt = {
     isHeaders: param.isHeaders,
     isStringify: param.isStringify,
     headers: new Headers(
       Object.assign(
         {
-          'Content-type': 'application/json;charset=utf-8',
+          'content-type': 'application/json;charset=utf-8',
           authorization: param.authorization || ''
         },
-        param.headers || {}
+        param.headers
       )
     ),
-    timeout: param.timeout || 30000,
     type: param.type || NET_RESPONSE_TYPE.TEXT,
     method: param.method || 'GET',
-    signal: param.signal || null
+    // timeout只会在未指定signal下生效
+    signal: abort ? abort.signal : param.signal
   };
-  if (!!param.data) {
+  if (param.body) {
+    sendData.body = param.body;
+  } else if (param.data) {
     if (sendData.method === 'GET') url = `${url}?${querystring.stringify(param.data)}`;
     else
       sendData.body = sendData.isStringify
         ? querystring.stringify(param.data)
         : JSON.stringify(param.data);
   }
-  return Promise.race([timeoutPromise(sendData.timeout), fetchPromise(url, sendData)]).catch(
-    (err) => errorReturn(err.message)
-  );
+  return fetchPromise<T>(url, sendData).then((req) => {
+    if (abort) clearTimeout(abort.id);
+    return req;
+  });
 }

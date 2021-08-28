@@ -12,7 +12,7 @@ module.exports = (env) => {
       __filename: false
     },
     entry: {
-      app: './src/app.ts'
+      app: './src/cfg.ts'
     },
     output: {
       filename: '[name].js',

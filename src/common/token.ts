@@ -1,8 +1,8 @@
 import { Next, ParameterizedContext } from 'koa';
 import Db from '@/common/db';
 import { isNull } from '@/utils';
-import { encodeMd5, randomSize } from '@/utils/crypto';
-import Log from '@/utils/log';
+import { encodeMd5, randomSize } from '@/common/crypto';
+import Log from '@/common/log';
 
 /**
  * 通过用户id添加token

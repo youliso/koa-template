@@ -1,5 +1,7 @@
-import { readFile } from '@/utils/file';
-import { resolve, basename } from 'path';
+import Log from '@/common/log';
+import { resolve } from 'path';
+import { readFile } from '@/common/file';
+
 type Obj<Value> = {} & {
   [key: string]: Value | Obj<Value>;
 };
@@ -17,12 +19,28 @@ export class Cfg {
     return Cfg.instance;
   }
 
-  constructor() {}
+  constructor() {
+  }
 
-  async setCfg(path: string) {
-    let req = (await readFile(resolve(path), { encoding: 'utf-8' })) as string;
-    if (req) this.sharedObject[basename(path, '.json')] = JSON.parse(req);
-    else console.error('setCfg error');
+  /**
+   * 挂载配置
+   * @param path 配置文件路径
+   * @param seat 存放位置
+   * @param parse 是否parse
+   * @param opt
+   */
+  async use(
+    path: string,
+    seat: string,
+    parse: boolean,
+    opt?: { encoding?: BufferEncoding; flag?: string }
+  ) {
+    try {
+      const cfg = (await readFile(resolve(path), opt || { encoding: 'utf-8' })) as any;
+      if (cfg) this.set(seat, parse ? JSON.parse(cfg) : cfg);
+    } catch (e) {
+      Log.error(e);
+    }
   }
 
   get<Value>(key: string): Value | undefined {
