@@ -1,6 +1,12 @@
 {
   "name": "koa2-template",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "koa2 template",
+  "author": {
+    "name": "youliso",
+    "email": "youliso@Hotmail.com"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "npx ts-node-dev -r tsconfig-paths/register src/index.ts",
     "build": "node build/index.js",

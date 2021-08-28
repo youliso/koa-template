@@ -31,12 +31,15 @@ import { cfgInit } from '@/cfg';
   //cors
   const corsOpt = Cfg.get<{ [key: string]: any }>('index.cors');
   const domainWhiteList = Cfg.get<string[]>('index.domainWhiteList');
-  koa.use(cors({
-    origin: (ctx: Koa.ParameterizedContext) => domainWhiteList[domainWhiteList.indexOf(ctx.header.origin)] || 'false',
-    allowMethods: corsOpt.allowMethods,
-    allowHeaders: corsOpt.allowHeaders,
-    exposeHeaders: corsOpt.exposeHeaders
-  }));
+  koa.use(
+    cors({
+      origin: (ctx: Koa.ParameterizedContext) =>
+        domainWhiteList[domainWhiteList.indexOf(ctx.header.origin)] || 'false',
+      allowMethods: corsOpt.allowMethods,
+      allowHeaders: corsOpt.allowHeaders,
+      exposeHeaders: corsOpt.exposeHeaders
+    })
+  );
 
   //compress
   koa.use(Compress());
