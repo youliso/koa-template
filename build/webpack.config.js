@@ -6,11 +6,6 @@ module.exports = (env) => {
   return {
     mode: env,
     target: 'node',
-    node: {
-      global: false,
-      __dirname: false,
-      __filename: false
-    },
     entry: {
       app: './src/index.ts'
     },
@@ -39,8 +34,11 @@ module.exports = (env) => {
         }
       ]
     },
+    externals: {
+      'node-abort-controller': 'require("node-abort-controller")'
+    },
     resolve: {
-      extensions: ['.tsx', '.ts', '.js'],
+      extensions: ['.ts', '.js'],
       alias: {
         dist: path.resolve('dist'),
         '@': path.resolve('src')
