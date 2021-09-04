@@ -21,7 +21,7 @@ export default (app: Partial<Koa.DefaultState & Koa.DefaultContext>) => {
     // 创建路由
     switch (route.protocol) {
       case ProtocolType.HTTP:
-        console.log('[modular|http]', path);
+        console.log(`[modular|http|${route.method}]`, path);
         httpRouters[route.method](path, ...route.middleware, route.handler);
         break;
       case ProtocolType.SOCKET:
