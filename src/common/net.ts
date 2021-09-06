@@ -3,24 +3,16 @@ import { AbortController } from 'node-abort-controller';
 import querystring from 'querystring';
 
 export interface NetOpt extends RequestInit {
-  authorization?: string;
   isStringify?: boolean; //是否stringify参数（非GET请求使用）
   isHeaders?: boolean; //是否获取headers
   data?: any;
   body?: any;
-  type?: NET_RESPONSE_TYPE; //返回数据类型
+  type?: 'TEXT' | 'JSON' | 'BUFFER' | 'BLOB'; //返回数据类型
 }
 
 export interface TimeOutAbort {
   signal: AbortSignal;
   id: NodeJS.Timeout;
-}
-
-export enum NET_RESPONSE_TYPE {
-  TEXT,
-  JSON,
-  BUFFER,
-  BLOB
 }
 
 /**
@@ -81,28 +73,28 @@ function fetchPromise<T>(url: string, sendData: NetOpt): Promise<T> {
     })
     .then(async (res) => {
       switch (sendData.type) {
-        case NET_RESPONSE_TYPE.TEXT:
+        case 'TEXT':
           return sendData.isHeaders
             ? {
                 headers: await res.headers,
                 data: await res.text()
               }
             : await res.text();
-        case NET_RESPONSE_TYPE.JSON:
+        case 'JSON':
           return sendData.isHeaders
             ? {
                 headers: await res.headers,
                 data: await res.json()
               }
             : await res.json();
-        case NET_RESPONSE_TYPE.BUFFER:
+        case 'BUFFER':
           return sendData.isHeaders
             ? {
                 headers: await res.headers,
                 data: await res.arrayBuffer()
               }
             : await res.arrayBuffer();
-        case NET_RESPONSE_TYPE.BLOB:
+        case 'BLOB':
           return sendData.isHeaders
             ? {
                 headers: await res.headers,
@@ -110,8 +102,7 @@ function fetchPromise<T>(url: string, sendData: NetOpt): Promise<T> {
               }
             : await res.blob();
       }
-    })
-    .catch((err) => ({ code: 400, msg: err.message }));
+    });
 }
 
 /**
@@ -129,13 +120,12 @@ export async function net<T>(url: string, param: NetOpt = {}): Promise<T> {
     headers: new Headers(
       Object.assign(
         {
-          'content-type': 'application/json;charset=utf-8',
-          authorization: param.authorization || ''
+          'content-type': 'application/json;charset=utf-8'
         },
         param.headers
       )
     ),
-    type: param.type || NET_RESPONSE_TYPE.TEXT,
+    type: param.type || 'TEXT',
     method: param.method || 'GET',
     // timeout只会在未指定signal下生效
     signal: abort ? abort.signal : param.signal
