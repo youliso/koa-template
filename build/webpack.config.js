@@ -26,6 +26,7 @@ module.exports = (env) => {
       rules: [
         {
           test: /\.ts$/,
+          exclude: /node_modules/,
           loader: 'esbuild-loader',
           options: {
             loader: 'ts',
@@ -34,9 +35,7 @@ module.exports = (env) => {
         }
       ]
     },
-    externals: {
-      'node-abort-controller': 'require("node-abort-controller")'
-    },
+    externals: {},
     resolve: {
       extensions: ['.ts', '.js'],
       alias: {

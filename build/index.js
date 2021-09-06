@@ -22,9 +22,10 @@ function deleteFolderRecursive(url) {
     console.log('...');
   }
 }
-
 deleteFolderRecursive(path.resolve('dist')); //清除dist
-webpack([main('production')], (err, stats) => {
+const cfg = main('production');
+for (const i in pack.dependencies) cfg.externals[i] = `require("${i}")`;
+webpack([cfg], (err, stats) => {
   if (err || stats.hasErrors()) {
     throw err;
   }
