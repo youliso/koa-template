@@ -35,6 +35,9 @@ webpack([cfg], (err, stats) => {
       {
         name: pack.name,
         version: pack.version,
+        scripts: {
+          start: 'node app.js'
+        },
         dependencies: pack.dependencies
       },
       null,
