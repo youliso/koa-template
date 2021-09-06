@@ -110,7 +110,7 @@ function fetchPromise<T>(url: string, sendData: NetOpt): Promise<T> {
  * @param url
  * @param param
  */
-export async function net<T>(url: string, param: NetOpt = {}): Promise<T> {
+export default async function net<T>(url: string, param: NetOpt = {}): Promise<T> {
   let abort: TimeOutAbort = null;
   // 默认1分钟请求超时
   if (!param.signal) abort = timeOutAbort(param.timeout || 1000 * 60);

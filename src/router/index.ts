@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import Router from 'koa-router';
-import { routes, ProtocolType } from '@/common/decorators';
+import { routes } from '@/common/decorators';
 import { socketServer } from '@/common/socket';
 
 export * from './modular'; //载入模块
@@ -20,11 +20,12 @@ export default (app: Partial<Koa.DefaultState & Koa.DefaultContext>) => {
 
     // 创建路由
     switch (route.protocol) {
-      case ProtocolType.HTTP:
-        console.log(`[modular|http|${route.method}]`, path);
-        httpRouters[route.method](path, ...route.middleware, route.handler);
+      case 'HTTP':
+        const method = route.method.toLowerCase();
+        console.log(`[modular|http|${method}]`, path);
+        httpRouters[method](path, ...route.middleware, route.handler);
         break;
-      case ProtocolType.SOCKET:
+      case 'SOCKET':
         console.log('[modular|socket]', path);
         socketRouters[path] = [...route.middleware, route.handler];
         break;

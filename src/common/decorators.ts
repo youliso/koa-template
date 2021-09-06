@@ -1,12 +1,12 @@
-import { isNull } from '@/utils';
-
 /**
  * 协议类型
  */
-export enum ProtocolType {
-  HTTP,
-  SOCKET
-}
+type ProtocolType = 'HTTP' | 'SOCKET';
+
+/**
+ * 请求方法
+ */
+type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTION' | 'PATCH';
 
 /**
  * 注册结构
@@ -21,18 +21,6 @@ export interface Routes {
 }
 
 /**
- * 请求方法
- */
-export enum RequestMethod {
-  GET = 'get',
-  POST = 'post',
-  PUT = 'pust',
-  DELETE = 'delete',
-  OPTION = 'option',
-  PATCH = 'patch'
-}
-
-/**
  * 定义注册的路由数组
  */
 export const routes: Routes[] = [];
@@ -42,30 +30,26 @@ export const routes: Routes[] = [];
  * @param {*} path
  */
 export function Controller(path: string = '') {
-  return function(target: any) {
+  return function (target: any) {
     target.prefix = path;
   };
 }
 
 /**
  * 给controller类的方法添加装饰
- * @param controllers Controllers
+ * @param params Controllers
  */
-export function RequestMapping(
-  {
-    path = '',
-    protocol = ProtocolType.HTTP,
-    method = RequestMethod.GET,
-    middleware = []
-  }: Routes
-) {
-  return function(target: any, name: string) {
-    if (isNull(path)) path = `/${name.toLocaleLowerCase()}`;
+export function RequestMapping(params: Routes = {}) {
+  if (!params.protocol) params.protocol = 'HTTP';
+  if (!params.method) params.method = 'GET';
+  if (!params.middleware) params.middleware = [];
+  return function (target: any, name: string) {
+    if (!params.path) params.path = `/${name.toLocaleLowerCase()}`;
     routes.push({
-      path,
-      method,
-      protocol,
-      middleware,
+      path: params.path,
+      method: params.method,
+      protocol: params.protocol,
+      middleware: params.middleware,
       handler: target[name],
       constructor: target.constructor
     });
