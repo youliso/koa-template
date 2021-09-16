@@ -5,7 +5,7 @@ import { ManagerOptions } from 'socket.io-client/build/manager';
 import { SocketOptions } from 'socket.io-client/build/socket';
 import { isNull } from '@/utils';
 import Log from '@/common/log';
-import * as Http from 'http';
+import type { Server } from 'http';
 
 export interface SocketClient extends socketIo {
   userId?: number;
@@ -35,8 +35,7 @@ class SocketServer {
     return SocketServer.instance;
   }
 
-  constructor() {
-  }
+  constructor() {}
 
   // 装载路由
   setRouters(routers: { [key: string]: Function[] }) {
@@ -44,7 +43,7 @@ class SocketServer {
   }
 
   // 初始化
-  init(server: Http.Server) {
+  init(server: Server) {
     const corsOpt = Cfg.get<{ [key: string]: any }>('index.cors');
     const domainWhiteList = Cfg.get<string[]>('index.domainWhiteList');
     this.io = new serverIo(server, {
@@ -97,8 +96,8 @@ class SocketServer {
       client.userId = Number(userId);
       this.clients[client.userId] = client;
       client.conn.on('packetCreate', async (packet: any) => {
-        if (packet.type === 'ping') {  // TODO token
-
+        if (packet.type === 'ping') {
+          // TODO token
         }
       });
       client.on('disconnect', async () => {
