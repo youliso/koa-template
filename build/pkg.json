@@ -1,5 +1,4 @@
 {
-  "assets": "dist/resources/**/*",
   "targets": ["node14-win-x64"],
   "outputPath": "out"
 }
