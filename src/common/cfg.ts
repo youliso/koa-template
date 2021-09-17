@@ -1,5 +1,4 @@
 import Log from '@/common/log';
-import { resolve } from 'path';
 import { readFile } from '@/common/file';
 
 type Obj<Value> = {} & {
@@ -35,7 +34,7 @@ export class Cfg {
     opt?: { encoding?: BufferEncoding; flag?: string }
   ) {
     try {
-      const cfg = (await readFile(resolve(path), opt || { encoding: 'utf-8' })) as any;
+      const cfg = (await readFile(path, opt || { encoding: 'utf-8' })) as any;
       if (cfg) this.set(seat, parse ? JSON.parse(cfg) : cfg);
     } catch (e) {
       Log.error(e);

@@ -49,6 +49,10 @@ module.exports = (env) => {
           {
             from: path.resolve('resources'),
             to: path.resolve('dist/resources')
+          },
+          {
+            from: path.resolve('resources'),
+            to: path.resolve('out/resources')
           }
         ]
       })

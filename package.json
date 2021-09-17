@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "npx ts-node-dev -r tsconfig-paths/register src/index.ts",
     "build": "node build/index.js",
+    "build:pkg": "node build/index.js && pkg dist/app.js -c build/pkg.json",
     "test": "npx ts-node -r tsconfig-paths/register ./test/index.ts"
   },
   "devDependencies": {

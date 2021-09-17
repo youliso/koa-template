@@ -48,7 +48,7 @@ import { cfgInit } from '@/cfg';
   koa.use(Bodyparser());
 
   //static
-  koa.use(Static(join(__dirname, '../resources/static')));
+  koa.use(Static(join('resources/static')));
 
   //timer
   await Timer.start();
