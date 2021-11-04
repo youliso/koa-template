@@ -1,11 +1,10 @@
 import Cfg from '@/common/cfg';
 import { Server as serverIo, Socket as socketIo } from 'socket.io';
 import { io, Socket } from 'socket.io-client';
-import { ManagerOptions } from 'socket.io-client/build/manager';
-import { SocketOptions } from 'socket.io-client/build/socket';
 import { isNull } from '@/utils';
 import Log from '@/common/log';
 import type { Server } from 'http';
+import type { ManagerOptions, SocketOptions } from 'socket.io-client';
 
 export interface SocketClient extends socketIo {
   userId?: number;
