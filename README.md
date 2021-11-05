@@ -1,5 +1,5 @@
-# koa2-template
-koa2 template
+# koa-template
+web framework for koa
 
 ## 安装依赖
 ```shell
