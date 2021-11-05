@@ -1,9 +1,9 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const { ESBuildMinifyPlugin } = require('esbuild-loader');
 
 module.exports = (env) => {
   return {
+    devtool: env === 'production' ? undefined : 'eval-cheap-source-map',
     mode: env,
     target: 'node',
     entry: {
@@ -15,22 +15,29 @@ module.exports = (env) => {
       path: path.resolve('dist')
     },
     optimization: {
-      minimize: env === 'production',
-      minimizer: [
-        new ESBuildMinifyPlugin({
-          target: 'esnext'
-        })
-      ]
+      minimize: env === 'production'
     },
     module: {
       rules: [
         {
-          test: /\.ts$/,
-          exclude: /node_modules/,
-          loader: 'esbuild-loader',
-          options: {
-            loader: 'ts',
-            target: 'esnext'
+          test: /\.(ts|js)$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'swc-loader',
+            options: {
+              jsc: {
+                transform: {
+                  legacyDecorator: true
+                },
+                parser: {
+                  syntax: 'typescript',
+                  tsx: false,
+                  decorators: true,
+                  dynamicImport: true
+                },
+                target: 'es2022'
+              }
+            }
           }
         }
       ]
