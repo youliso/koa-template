@@ -44,11 +44,23 @@ class SocketServer {
   // 初始化
   init(server: Server) {
     const corsOpt = Cfg.get<{ [key: string]: any }>('index.cors');
-    const domainWhiteList = Cfg.get<string[]>('index.domainWhiteList');
+    const domainWhite = Cfg.get<string[]>('index.domainWhite');
     this.io = new serverIo(server, {
       cors: {
         origin: (origin, callback) => {
-          if (domainWhiteList.indexOf(origin) !== -1 || !origin) {
+          if (typeof domainWhite === 'string') {
+            if (domainWhite === '*') {
+              callback(null, true);
+              return;
+            }
+            if (domainWhite === origin) {
+              callback(null, true);
+              return;
+            }
+            callback(new Error('Not allowed by CORS'));
+            return;
+          }
+          if (domainWhite.indexOf(origin) !== -1) {
             callback(null, true);
           } else {
             callback(new Error('Not allowed by CORS'));

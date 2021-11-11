@@ -1,4 +1,4 @@
-import { Next, ParameterizedContext } from 'koa';
+import type { Next, DefaultContext } from 'koa';
 import Db from '@/common/db';
 import { isNull } from '@/utils';
 import { encodeMd5, randomSize } from '@/common/crypto';
@@ -60,7 +60,7 @@ export async function tokenExpire(token: string, seconds: number) {
   }
 }
 
-export async function tokenUse(ctx: ParameterizedContext, next: Next) {
+export async function tokenUse(ctx: DefaultContext, next: Next) {
   let token = ctx.request.headers['authorization'];
   if (isNull(token)) {
     ctx.body = '没有token';

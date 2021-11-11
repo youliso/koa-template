@@ -1,4 +1,4 @@
-import { Next, ParameterizedContext } from 'koa';
+import type { Next, DefaultContext } from 'koa';
 import { Controller, RequestMapping } from '@/common/decorators';
 import { Success } from '@/common/restful';
 import { SocketClient, SocketCtx } from '@/common/socket';
@@ -9,7 +9,7 @@ const indexServer = new IndexServer();
 @Controller('/index')
 class Index {
   @RequestMapping()
-  async home(ctx: ParameterizedContext, next: Next) {
+  async home(ctx: DefaultContext, next: Next) {
     ctx.body = Success('ok');
     await indexServer.test();
     await next();
