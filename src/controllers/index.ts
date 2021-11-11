@@ -11,7 +11,7 @@ class Index {
   @RequestMapping()
   async home(ctx: ParameterizedContext, next: Next) {
     ctx.body = Success('ok');
-    indexServer.test();
+    await indexServer.test();
     await next();
   }
 

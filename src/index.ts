@@ -69,7 +69,7 @@ import { cfgInit } from '@/cfg';
   //listen
   server.listen(port, () => {
     console.log(
-      `[success] http://127.0.0.1:${port} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
+      `success port:${port} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
     );
   });
 })();
