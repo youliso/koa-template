@@ -7,10 +7,11 @@ import Log from '@/common/log';
 /**
  * 通过用户id添加token
  * @param id
+ * @param key
  */
-export async function tokenAdd(id: number) {
+export async function tokenAdd(id: number, key: string) {
   try {
-    let token = encodeMd5(id.toString() + randomSize(10));
+    let token = encodeMd5(id.toString() + randomSize(10), key);
     await Db.redisDb['sub'].set(0, token, id.toString(), 7200);
     return token;
   } catch (e) {

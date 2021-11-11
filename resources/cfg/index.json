@@ -1,23 +1,9 @@
 {
   "port": 3000,
-  "domainWhiteList": [
-    "http://localhost:3346"
-  ],
+  "domainWhite": "*",
   "cors": {
-    "allowMethods": [
-      "GET",
-      "POST",
-      "PUT",
-      "DELETE",
-      "OPTIONS"
-    ],
-    "allowHeaders": [
-      "Content-Type",
-      "Authorization"
-    ],
-    "exposeHeaders": [
-      "Content-Type",
-      "Authorization"
-    ]
+    "allowMethods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allowHeaders": ["Content-Type", "Authorization"],
+    "exposeHeaders": ["Content-Type", "Authorization"]
   }
 }

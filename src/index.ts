@@ -30,11 +30,17 @@ import { cfgInit } from '@/cfg';
 
   //cors
   const corsOpt = Cfg.get<{ [key: string]: any }>('index.cors');
-  const domainWhiteList = Cfg.get<string[]>('index.domainWhiteList');
+  const domainWhite = Cfg.get<string[]>('index.domainWhite');
   koa.use(
     cors({
-      origin: (ctx: Koa.ParameterizedContext) =>
-        domainWhiteList[domainWhiteList.indexOf(ctx.header.origin)] || 'false',
+      origin: (ctx: Koa.ParameterizedContext) => {
+        if (typeof domainWhite === 'string') {
+          if (domainWhite === '*') return '*';
+          if (domainWhite === ctx.header.origin) return domainWhite;
+          return 'false';
+        }
+        return domainWhite[domainWhite.indexOf(ctx.header.origin)] || 'false';
+      },
       allowMethods: corsOpt.allowMethods,
       allowHeaders: corsOpt.allowHeaders,
       exposeHeaders: corsOpt.exposeHeaders

@@ -1,5 +1,4 @@
-export class IndexServer {
-  constructor() {}
+export default class IndexServer {
   test() {
     console.log('test server');
   }
