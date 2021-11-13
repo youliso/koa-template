@@ -1,12 +1,12 @@
-import type { Next, DefaultContext } from 'koa';
 import { Controller, RequestMapping } from '@/common/decorators';
 import { Success } from '@/common/restful';
-import { SocketClient, SocketCtx } from '@/common/socket';
+import type { Next, DefaultContext } from 'koa';
+import type { SocketClient, SocketCtx } from '@/common/socket';
 import IndexServer from '@/servers';
 
 const indexServer = new IndexServer();
 
-@Controller('/index')
+@Controller('')
 class Index {
   @RequestMapping()
   async home(ctx: DefaultContext, next: Next) {
