@@ -1589,10 +1589,10 @@ ms@^2.1.1:
   resolved "https://registry.npm.taobao.org/ms/download/ms-2.1.3.tgz?cache=0&sync_timestamp=1607433856030&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fms%2Fdownload%2Fms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=
 
-mysql2@^2.3.3-rc.0:
-  version "2.3.3-rc.0"
-  resolved "https://registry.npmmirror.com/mysql2/download/mysql2-2.3.3-rc.0.tgz#550e51b836cea93a134eb6138aa0120d5cb8dcb8"
-  integrity sha1-VQ5RuDbOqToTTrYTiqASDVy43Lg=
+mysql2@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.npmmirror.com/mysql2/download/mysql2-2.3.3.tgz#944f3deca4b16629052ff8614fbf89d5552545a0"
+  integrity sha1-lE897KSxZikFL/hhT7+J1VUlRaA=
   dependencies:
     denque "^2.0.1"
     generate-function "^2.3.1"
