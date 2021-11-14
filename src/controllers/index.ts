@@ -8,8 +8,10 @@ const indexServer = new IndexServer();
 
 @Controller('')
 class Index {
-  @RequestMapping()
-  async home(ctx: DefaultContext, next: Next) {
+  @RequestMapping({
+    path: '/'
+  })
+  async index(ctx: DefaultContext, next: Next) {
     ctx.body = Success('ok');
     await indexServer.test();
     await next();
@@ -18,7 +20,7 @@ class Index {
   @RequestMapping({
     protocol: 'SOCKET'
   })
-  async test2(client: SocketClient, ctx: SocketCtx) {
+  async socket(client: SocketClient, ctx: SocketCtx) {
     console.log('socket test');
     client.send({
       key: 'socket-home',

@@ -24,7 +24,6 @@ import { cfgInit } from '@/cfg';
   koa.use(async (ctx, next) => {
     if (ctx.request.path === '/favicon.ico') return;
     await next();
-    if (ctx.request.path === '/') ctx.body = 'Copyright (c) 2021 youliso';
     Log.access(`${ctx.originalUrl} ${ctx.header['x-real-ip'] || '-'} ${ctx.header['user-agent']}`);
   });
 

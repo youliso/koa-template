@@ -44,7 +44,7 @@ export function RequestMapping(params: Routes = {}) {
   if (!params.method) params.method = 'GET';
   if (!params.middleware) params.middleware = [];
   return function (target: any, name: string) {
-    if (!params.path) params.path = `/${name.toLocaleLowerCase()}`;
+    if (!params.hasOwnProperty('path')) params.path = `/${name.toLocaleLowerCase()}`;
     routes.push({
       path: params.path,
       method: params.method,
