@@ -12,63 +12,59 @@ import Cfg from '@/common/cfg';
 import cors from '@/common/cors';
 import { cfgInit } from '@/cfg';
 
-(async () => {
-  await cfgInit();
-  const port = Cfg.get('index.port');
-  const koa = new Koa();
+await cfgInit();
+const port = Cfg.get('index.port');
+const koa = new Koa();
 
-  //onerror
-  koa.on('error', (err) => Log.error(err));
+//onerror
+koa.on('error', (err) => Log.error(err));
 
-  //init
-  koa.use(async (ctx, next) => {
-    if (ctx.request.path === '/favicon.ico') return;
-    await next();
-    Log.access(`${ctx.originalUrl} ${ctx.header['x-real-ip'] || '-'} ${ctx.header['user-agent']}`);
-  });
+//init
+koa.use(async (ctx, next) => {
+  if (ctx.request.path === '/favicon.ico') return;
+  await next();
+  Log.access(`${ctx.originalUrl} ${ctx.header['x-real-ip'] || '-'} ${ctx.header['user-agent']}`);
+});
 
-  //cors
-  const corsOpt = Cfg.get<{ [key: string]: any }>('index.cors');
-  const domainWhite = Cfg.get<string[]>('index.domainWhite');
-  koa.use(
-    cors({
-      origin: (ctx: Koa.ParameterizedContext) => {
-        if (typeof domainWhite === 'string') {
-          if (domainWhite === '*') return '*';
-          if (domainWhite === ctx.header.origin) return domainWhite;
-          return 'false';
-        }
-        return domainWhite[domainWhite.indexOf(ctx.header.origin)] || 'false';
-      },
-      allowMethods: corsOpt.allowMethods,
-      allowHeaders: corsOpt.allowHeaders,
-      exposeHeaders: corsOpt.exposeHeaders
-    })
-  );
+//cors
+const corsOpt = Cfg.get<{ [key: string]: any }>('index.cors');
+const domainWhite = Cfg.get<string[]>('index.domainWhite');
+koa.use(
+  cors({
+    origin: (ctx: Koa.ParameterizedContext) => {
+      if (typeof domainWhite === 'string') {
+        if (domainWhite === '*') return '*';
+        if (domainWhite === ctx.header.origin) return domainWhite;
+        return 'false';
+      }
+      return domainWhite[domainWhite.indexOf(ctx.header.origin)] || 'false';
+    },
+    allowMethods: corsOpt.allowMethods,
+    allowHeaders: corsOpt.allowHeaders,
+    exposeHeaders: corsOpt.exposeHeaders
+  })
+);
 
-  //compress
-  koa.use(Compress());
+//compress
+koa.use(Compress());
 
-  //bodyparser
-  koa.use(Bodyparser());
+//bodyparser
+koa.use(Bodyparser());
 
-  //static
-  koa.use(Static(join('resources/static')));
+//static
+koa.use(Static(join('resources/static')));
 
-  //timer
-  await Timer.start();
+//timer
+await Timer.start();
 
-  //router
-  Router(koa);
+//router
+Router(koa);
 
-  //socket
-  const server = http.createServer(koa.callback());
-  socketServer.init(server);
+//socket
+const server = http.createServer(koa.callback());
+socketServer.init(server);
 
-  //listen
-  server.listen(port, () => {
-    console.log(
-      `success port:${port} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
-    );
-  });
-})();
+//listen
+server.listen(port, () => {
+  console.log(`success port:${port}`);
+});

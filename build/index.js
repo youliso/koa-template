@@ -30,7 +30,7 @@ webpack([cfg], (err, stats) => {
     throw err;
   }
   fs.writeFileSync(
-    './dist/package.json',
+    path.resolve('./dist/package.json'),
     JSON.stringify(
       {
         name: pack.name,

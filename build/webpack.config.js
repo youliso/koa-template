@@ -3,6 +3,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env) => {
   return {
+    experiments: {
+      topLevelAwait: true
+    },
     devtool: env === 'production' ? undefined : 'eval-cheap-source-map',
     mode: env,
     target: 'node',
